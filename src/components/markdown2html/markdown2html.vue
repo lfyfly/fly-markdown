@@ -7,7 +7,7 @@
   width: 100%;
   position: absolute;
   top: $header-height+$separation * 0.5;
-  bottom: $separation; // 展开目录按钮（目录被隐藏的情况）
+  bottom: $separation; // 展开
   $catalog-btn-height: 20px;
   $catalog-btn-color: #606060;
   $catalog-btn-height-s: $catalog-btn-height / 5;
@@ -54,6 +54,13 @@
     height: 100%;
     overflow: auto;
     box-sizing: border-box;
+
+    // 这真是极好的
+    &:after{
+      content: '输入辅助，不可见';
+      font-size: 40px;
+      opacity: 0;
+    }
   }
 }
 </style>
@@ -116,6 +123,7 @@ export default {
     getCatalogArr(title) {
       this.catalogArr = []
       // 第一级别的title是h1 或者 h2 。。。
+
       if (this.titleElsArr.length === 0) return
       var rootTitleIndex = parseInt(this.titleElsArr[0].tagName.substring(1))
       console.log('rootTitleIndex', rootTitleIndex, typeof rootTitleIndex)

@@ -8,17 +8,18 @@
   textarea {
     resize: none;
     font-size: 14px;
-    padding: 10px;
+    line-height: 20px;
+    padding: 9px; // 加上边框1px，正好地区一个line-height
     width: 500px;
     height: 220px;
     box-sizing: border-box;
     vertical-align: bottom;
   }
-  textarea a {
-    margin: 0 auto;
-    background: #ccc;
-    padding: 20px;
-  }
+  // textarea a {
+  //   margin: 0 auto;
+  //   background: #ccc;
+  //   padding: 20px;
+  // }
   .markdown-option {
     width: 100%;
     box-sizing: border-box;
