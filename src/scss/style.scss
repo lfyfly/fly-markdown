@@ -1,0 +1,18 @@
+// 色彩
+$main-color: red;
+$base-color: #303030;
+$base-color-light: lighten($base-color, 40%);
+$base-color-dark: darken($base-color, 40%);
+// 文字
+$font-family: 'microsoft yahei';
+$font-color-base: $base-color;
+$line-style: 1px solid #ccc;
+$font-size-base: 16px;
+$font-size-sm: $font-size-base * 0.9;
+$font-sizee-xs: $font-size-sm * 0.9;
+$font-increase: 1.16;
+$font-size-l5: $font-size-base;
+$font-size-l4: $font-size-base * $font-increase;
+$font-size-l3: $font-size-l4 * $font-increase;
+$font-size-l2: $font-size-l3 * $font-increase;
+$font-size-l1: $font-size-l2 * $font-increase;
