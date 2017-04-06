@@ -7,6 +7,17 @@ $icon-size:$font-size-l1*1.2;
 $icon-url: url('../../img/icon/github_icon_1.jpg');
 $catolog-width:220px;
 $line-color: black;
+// catalog 切换动画
+.slide-leave-active,
+.slide-enter-active {
+  transition: transform .5s;
+}
+
+.slide-enter,
+.slide-leave-active {
+  transform: translateX( - $catolog-width)
+}
+
 @media all and (max-width:800px) {
   div.markdown-header {
     box-sizing: border-box;
@@ -30,7 +41,7 @@ $line-color: black;
     .markdown-catalog {
       z-index: 1000;
       // display: none;
-      background: rgba(0, 0, 0, .7);
+      background: rgba(0, 0, 0, .8);
       color: #ccc;
       left: 0;
       a {

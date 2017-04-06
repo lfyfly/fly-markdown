@@ -53,10 +53,8 @@
     padding: $separation;
     height: 100%;
     overflow: auto;
-    box-sizing: border-box;
-
-    // 这真是极好的
-    &:after{
+    box-sizing: border-box; // 这真是极好的
+    &:after {
       content: '输入辅助，不可见';
       font-size: 40px;
       opacity: 0;
@@ -69,13 +67,14 @@
 <template lang="pug">
 .markdown2html
   a.catalog-btn(@click="toggleCatalog")
-  .markdown-catalog(ref="catalog")
-    ul(v-for="v1 in catalogArr")
-      li: a.title.level1(:href="'#'+v1.title") {{v1.title}}
-      ul(v-if="v1.children",v-for="v2 in v1.children")
-        li: a.title.level2(:href="'#'+v2.title") {{v2.title}}
-        ul(v-if="v2.children",v-for="v3 in v2.children")
-          li: a.title.level3(:href="'#'+v3.title") {{v3.title}}
+  transition(name="slide")
+    .markdown-catalog(v-show="catalogShow", ref="catalog")
+      ul(v-for="v1 in catalogArr")
+        li: a.title.level1(:href="'#'+v1.title") {{v1.title}}
+        ul(v-if="v1.children",v-for="v2 in v1.children")
+          li: a.title.level2(:href="'#'+v2.title") {{v2.title}}
+          ul(v-if="v2.children",v-for="v3 in v2.children")
+            li: a.title.level3(:href="'#'+v3.title") {{v3.title}}
   .med-line
   .markdown-html(ref="markdownContent")
 
@@ -99,6 +98,8 @@ export default {
   data() {
     return {
       msg: 'this is from markdown2html.vue',
+      catalogShow: false,
+      oldWindowWidth: 0,
       titleElsArr: [],
       catalogArr: []
     }
@@ -106,15 +107,20 @@ export default {
   props: ['value'],
   methods: {
     toggleCatalog() {
-      var catalogEl = this.$refs.catalog
+      this.catalogShow = !this.catalogShow
 
-      catalogEl.style.display = getComputedStyle(catalogEl, null).display === 'none' ? 'block' : 'none'
+      // catalogEl.style.display = getComputedStyle(catalogEl, null).display === 'none' ? 'block' : 'none'
     },
     // 当屏幕宽度大于800时 有media 来控制目录显示
     removeCatalogDisplay() {
+      var winWidth =  window.innerWidth
+      // 不变 发生在移动端（输入法回收或者进入时会触发 resie）
+      if(winWidth === this.oldWindowWidth) return
+      this.oldWindowWidth = winWidth
       if (window.innerWidth > 800) {
-        this.$refs.catalog.style=''
-
+        this.catalogShow = true
+      }else{
+        this.catalogShow = false
       }
     },
 
@@ -179,7 +185,9 @@ export default {
     }
   },
   mounted() {
-    window.addEventListener('resize',this.removeCatalogDisplay)
+    // 初始判断
+    this.removeCatalogDisplay()
+    window.addEventListener('resize', this.removeCatalogDisplay)
   },
   watch: {
     value: function () {
