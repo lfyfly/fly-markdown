@@ -1,18 +1,24 @@
 // 色彩
-$main-color: red;
+// 随着主色变化的文字颜色
+$main-color: black;
+// 随着主题变化的文字颜色
+$font-color-main: #ccc;
+$active-color: #17bd2b;
 $base-color: #303030;
-$base-color-light: lighten($base-color, 40%);
-$base-color-dark: darken($base-color, 40%);
+$light-rate: 40%;
+$base-color-light: lighten($base-color, $light-rate);
+$base-color-dark: darken($base-color, $light-rate);
 // 文字
 $font-family: 'microsoft yahei';
 $font-color-base: $base-color;
 $line-style: 1px solid #ccc;
 $font-size-base: 16px;
-$font-size-sm: $font-size-base * 0.9;
-$font-sizee-xs: $font-size-sm * 0.9;
-$font-increase: 1.16;
+// 字体比例
+$font-rate: 1.16;
+$font-size-sm: round($font-size-base / $font-rate);
+$font-size-xs: round($font-size-sm / $font-rate);
 $font-size-l5: $font-size-base;
-$font-size-l4: $font-size-base * $font-increase;
-$font-size-l3: $font-size-l4 * $font-increase;
-$font-size-l2: $font-size-l3 * $font-increase;
-$font-size-l1: $font-size-l2 * $font-increase;
+$font-size-l4: round($font-size-base * $font-rate);
+$font-size-l3: round($font-size-l4 * $font-rate);
+$font-size-l2: round($font-size-l3 * $font-rate);
+$font-size-l1: round($font-size-l2 * $font-rate);

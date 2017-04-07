@@ -1,0 +1,108 @@
+@import './style.scss';
+@import './layout.scss';
+@media all and (max-width:800px) {
+  div.markdown-header {
+    padding-left: $font-size-l2*2;
+    margin: 0;
+    div.document-info>*:before {
+      font-size: $font-size-sm;
+    }
+    div.document-info a {
+      font-size: $font-size-sm;
+    }
+     h1.document-title {
+      padding-left: 0;
+    }
+  }
+  div.markdown2html {
+    bottom: 0;
+    a.catalog-btn {
+      display: block;
+    }
+    // catalog 切换动画
+    // 屏幕大于800px的时候不适用动画
+    .slide-leave-active,
+    .slide-enter-active {
+      transition: transform .5s;
+    }
+    .slide-enter,
+    .slide-leave-active {
+      transform: translateX( - $catolog-width)
+    }
+    // markdown-catalog 与 markdown-html 分隔线
+    .med-line {
+      display: none;
+    }
+    // z-index大于#markdown-input
+    .markdown-catalog {
+      z-index: 1000;
+      background: rgba(0, 0, 0, .8);
+      left: 0;
+      a {
+        color: #ccc;
+      }
+    }
+    // 因为markdown-catalog 隐藏
+    .markdown-html {
+      margin: 0;
+    }
+  }
+}
+
+// 屏幕小于500px,输入框的高度
+@media screen and (max-width: 500px) {
+  div.markdown-header {
+    .document-header {
+      height: $header-height * .6;
+      font-size: 0;
+    }
+    h1.document-title {
+      font-size: $font-size-l2;
+      line-height: $header-height * .6;
+    }
+    .github-icon {
+      line-height: 40px;
+      margin-top: -4px;
+      width: $icon-size* 0.8;
+      height: $icon-size* 0.8;
+      background-size: $icon-size* 0.8 $icon-size* 0.8;
+    }
+    div.document-info {
+      &>*:before {
+        font-size: $font-size-xs;
+      }
+      & a {
+        font-size: $font-size-xs;
+      }
+      // 取消绝对定位
+      position: static;
+    }
+  }
+  div.markdown2html {
+    bottom: $textarea-height + $markdown-option-height;
+    .markdown-html {
+      border-bottom: 0px solid;
+    }
+    .markdown-catalog{
+      border: none;
+    }
+  }
+  // 屏幕小于500px的时候标题字体减小
+  .markdown2html {
+    h1 a.title {
+      font-size: $font-size-l2;
+    }
+    h2 a.title {
+      font-size: $font-size-l3;
+    }
+    h3 a.title {
+      font-size: $font-size-l4;
+    }
+    h4 a.title {
+      font-size: $font-size-l5;
+    }
+    h5 a.title {
+      font-size: $font-size-sm;
+    }
+  }
+}

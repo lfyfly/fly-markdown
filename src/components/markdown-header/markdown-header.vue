@@ -1,10 +1,11 @@
 <!-- —————————————↓SCSS———————分界线————————————————————————— -->
 <style lang="scss">
 @import '../../scss/layout.scss';
+@import '../../scss/style.scss';
 
 .markdown-header {
   height: $header-height;
-  border-top: $separation /2 solid $line-color;
+  border-top: $separation /2 solid $main-color;
   margin: 0 $separation;
   position: relative;
 

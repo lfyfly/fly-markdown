@@ -2,6 +2,7 @@
 <style lang="scss">
 @import '../../scss/skin/default.scss';
 @import '../../scss/layout.scss';
+@import '../../scss/style.scss';
 
 .markdown2html {
   width: 100%;
@@ -35,21 +36,21 @@
     height: 100%;
     overflow: auto;
     box-sizing: border-box; // border: 1px solid;
-    border-top: $separation / 2 solid $line-color;
-    border-bottom: $separation / 2 solid $line-color;
+    border-top: $separation / 2 solid $main-color;
+    border-bottom: $separation / 2 solid $main-color;
   }
   .med-line {
     position: absolute;
     height: 100%;
     width: $separation / 2;
-    background: $line-color;
+    background: $main-color;
     margin-left: $catolog-width+$separation * 2;
   }
   .markdown-html {
     margin-left: $catolog-width+$separation * 3.5;
     margin-right: $separation; // border: $separation / 2 solid;
-    border-top: $separation / 2 solid $line-color;
-    border-bottom: $separation / 2 solid $line-color;
+    border-top: $separation / 2 solid $main-color;
+    border-bottom: $separation / 2 solid $main-color;
     padding: $separation;
     height: 100%;
     overflow: auto;
