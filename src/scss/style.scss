@@ -22,3 +22,28 @@ $font-size-l4: round($font-size-base * $font-rate);
 $font-size-l3: round($font-size-l4 * $font-rate);
 $font-size-l2: round($font-size-l3 * $font-rate);
 $font-size-l1: round($font-size-l2 * $font-rate);
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity .5s
+}
+
+.fade-enter,
+.fade-leave-active {
+  opacity: 0
+}
+
+.fileListSlide-enter-active,
+.fileListSlide-leave-active {
+  transition: transform .5s
+}
+
+.fileListSlide-enter,
+.fileListSlide-leave-active {
+  transform: translateX(-100%);
+}
+
+%fontOver {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

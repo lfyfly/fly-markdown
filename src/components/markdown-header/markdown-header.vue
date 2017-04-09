@@ -32,12 +32,7 @@
     position: absolute;
     right: 0;
     bottom: .2em;
-    .author:before {
-      content: 'athour: ';
-      font-weight: bold;
-    }
-    .e-mail:before {
-      content: 'e-mail: ';
+    span.info-key {
       font-weight: bold;
     }
   }
@@ -54,11 +49,14 @@
 .markdown-header
   a.catalog-btn
   .document-header
-    h1.document-title 文档标题
+    h1.document-title {{isEditing?isEditing.fileName: 'fly-markdown'}}
     a.github-icon(href="")
   .document-info
-    .author: a lfyfly
-    .e-mail: a 410793635@qq.com
+    //- 还未开始编辑显示初始值，如果没有填入信息就不写入info
+    .info(v-if="isEditing===null||isEditing!==null&&isEditing.info.length!=0",v-for="v in fileInfo")
+      span().info-key {{v.key+': '}}
+      span().info-value: a {{v.value}}
+
 
 
 </template>
@@ -66,16 +64,26 @@
 <!-- ——————————————↓JS—————————分界线———————————————————————— -->
 <script>
 //import XXX from './components/XXX'
+import BUS from '../bus.js'
 
 export default {
   name: 'markdown-header',
   data() {
     return {
-      msg: 'this is from markdown-header.vue'
+      msg: 'this is from markdown-header.vue',
     }
   },
-  methods: {
+  computed: {
+    isEditing() {
+      return BUS.isEditing
+    },
+    fileInfo() {
+      return BUS.isEditing && BUS.isEditing.info.length > 0 ? BUS.isEditing.info : [{ key: '软件作者', value: 'lfyfly' }, { key: '邮箱', value: '410793635@qq.com' }]
+    }
+  },
 
+  mounted() {
+    console.log(BUS.isEditing)
   }
 }
 </script>

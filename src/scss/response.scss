@@ -4,13 +4,13 @@
   div.markdown-header {
     padding-left: $font-size-l2*2;
     margin: 0;
-    div.document-info>*:before {
-      font-size: $font-size-sm;
+    div.document-info {
+      .info-key,
+      .info-value a{
+        font-size: $font-size-sm;
+      }
     }
-    div.document-info a {
-      font-size: $font-size-sm;
-    }
-     h1.document-title {
+    h1.document-title {
       padding-left: 0;
     }
   }
@@ -83,7 +83,7 @@
     .markdown-html {
       border-bottom: 0px solid;
     }
-    .markdown-catalog{
+    .markdown-catalog {
       border: none;
     }
   }

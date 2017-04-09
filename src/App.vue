@@ -1,14 +1,18 @@
 <template lang="pug">
 #app
   markdown-header
-  markdown-input(v-model="markdownStr", @flod="textareaFold", ref="markdownInput")
   markdown2html(:value="markdownStr")
+  markdown-input(v-model="markdownStr", @flod="textareaFold", ref="markdownInput")
+  new-markdown
 </template>
 
 <script>
+import BUS from './components/bus.js'
+
 import markdownInput from './components/markdown-input/markdown-input.vue'
 import markdown2html from './components/markdown2html/markdown2html.vue'
-import markdownHeader from './components/markdown-header//markdown-header.vue'
+import markdownHeader from './components/markdown-header/markdown-header.vue'
+import newMarkdown from './components/new-markdown/new-markdown.vue'
 
 
 
@@ -31,8 +35,19 @@ export default {
 
       //移动端 和 桌面端小于500px 折叠时，markdown-html 区域大小同步
       htmlContainerEl: null,
-      markdownInputEl: null
+      markdownInputEl: null,
+
+      // 手机的markdown-input高度
+      phoneInputHeight: 110,
+      // 平板的markdown-input高度
+      padInputHeight: 210,
+
+      // 自动保存数据到localStorage中的时间间隔
+      autoSaveInterval: 3000
     }
+  },
+  computed: {
+
   },
   methods: {
     // 初始化一些data中的数据
@@ -91,12 +106,12 @@ export default {
         var oInput = document.querySelector('#markdown-input')
         var oTextarea = oInput.getElementsByTagName('textarea')[0]
         if (window.innerWidth <= 500) {
-          var height = 110;
+          var height = this.phoneInputHeight;
           oInput.style.bottom = '0'
 
         } else { // 屏幕大于500 的桌面端和移动端不一样
           this.htmlScrollEl.style.borderBottom = "none"
-          var height = 210;
+          var height = this.padInputHeight;
           oInput.style.left = '0'
           oInput.style.bottom = '0'
           oInput.style.top = 'auto'
@@ -108,19 +123,29 @@ export default {
         oTextarea.style.height = (height - 30) + 'px' // 20 的整数
         document.querySelector('.markdown2html').style.bottom = height + 'px'
       }
+    },
+
+    // 数据保存
+    saveToLocalStorage() {
+      // 文件是否存在
+      alert(123)
+      // 没有则创建一个
+    },
+    setAutoSave() {
+      setInterval(this.saveToLocalStorage, saveToLocalStorage, this.autoSaveInterval)
     }
   },
   mounted() {
     this.init()
-
     this.mobileInput()
     this.resposeScroll()
   },
   components: {
     markdownInput,
     markdown2html,
-    markdownHeader
-  }
+    markdownHeader,
+    newMarkdown
+  },
 }
 </script>
 
