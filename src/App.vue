@@ -4,6 +4,7 @@
   markdown2html()
   markdown-input(v-model="markdownStr", @flod="textareaFold", ref="markdownInput")
   new-markdown
+  read-local-file
 </template>
 
 <script>
@@ -13,6 +14,7 @@ import markdownInput from './components/markdown-input/markdown-input.vue'
 import markdown2html from './components/markdown2html/markdown2html.vue'
 import markdownHeader from './components/markdown-header/markdown-header.vue'
 import newMarkdown from './components/new-markdown/new-markdown.vue'
+import readLocalFile from './components/read-local-file/read-local-file.vue'
 
 
 
@@ -144,7 +146,8 @@ export default {
     markdownInput,
     markdown2html,
     markdownHeader,
-    newMarkdown
+    newMarkdown,
+    readLocalFile
   },
 }
 </script>

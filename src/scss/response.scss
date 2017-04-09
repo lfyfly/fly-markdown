@@ -68,9 +68,8 @@
       background-size: $icon-size* 0.8 $icon-size* 0.8;
     }
     div.document-info {
-      &>*:before {
-        font-size: $font-size-xs;
-      }
+      text-align: left;
+
       & a {
         font-size: $font-size-xs;
       }
@@ -106,3 +105,22 @@
     }
   }
 }
+// 超小屏幕
+@media screen and (max-width: 320px) {
+  div.markdown-header{
+    .document-info>.info:last-child{
+      display: none;
+    }
+  }
+  div.new-markdown{
+    font-size: $font-size-sm;
+    input, input.key {
+      font-size: $font-size-sm;
+    }
+  }
+  a.dialog-btns{
+      font-size: $font-size-sm;
+
+  }
+}
+

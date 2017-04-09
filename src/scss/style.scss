@@ -24,17 +24,27 @@ $font-size-l2: round($font-size-l3 * $font-rate);
 $font-size-l1: round($font-size-l2 * $font-rate);
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity .5s
+  transition: opacity 1s;
 }
 
 .fade-enter,
 .fade-leave-active {
-  opacity: 0
+  opacity: 0;
+}
+
+.slide2bottom-enter-active,
+.slide2bottom-leave-active {
+  transition: transform .5s;
+}
+
+.slide2bottom-enter,
+.slide2bottom-leave-active {
+  transform: translateY(-150%);
 }
 
 .fileListSlide-enter-active,
 .fileListSlide-leave-active {
-  transition: transform .5s
+  transition: transform .5s;
 }
 
 .fileListSlide-enter,

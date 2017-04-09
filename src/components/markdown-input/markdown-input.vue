@@ -20,7 +20,7 @@
   }
   .markdown-option {
     width: 100%;
-    min-width: 350px;
+    min-width: 320px;
     box-sizing: border-box;
     background: $main-color;
     height: 30px;
@@ -35,7 +35,7 @@
   .option-list>* {
     float: left;
     color: $font-color-main;
-    margin-right: 1em;
+    margin-right: 12px;
   }
   .cover {
     width: 100%;
@@ -43,7 +43,6 @@
     position: absolute;
     top: 30px;
     bottom: 0;
-
   }
   .edit-tip {
     color: red;
@@ -52,6 +51,7 @@
     width: 100%;
     display: table;
     margin: auto 0;
+    margin-top: 3em\0; //ie 9 10 11
     position: absolute;
     top: 30px;
     bottom: 0;
@@ -100,15 +100,18 @@
   .markdown-option(v-drag="{moveElId:'markdown-input',dragOutX:30,dragOutY:30,cursor:'move'}")
     .option-list
       a(:class="{active:!textareaShow}",@click="toggleFoldTextarea") {{textareaShow?'收起':'展开'}}
-      a 保存
-      a 导出
+      //- a(@click="save") 保存
+      a(@click="importFile") 导入
+      a(@click="exportFile") 导出
       a(@click="newMarkdown",:class="{active:!isEditing}") 新建文件
       a(@click="toggleFileListShow",:class="{active:fileListShow}") 文件列表
   textarea(spellcheck="false",
           ref="textarea",
-          v-model="markdownData"
           v-show="textareaShow",
           @keydown.tab.prevent="",
+          @keydown.enter="save",
+          @input="input2markdownData",
+
           )
   .cover(v-if="!isEditing")
   pre.edit-tip(v-if="!isEditing").
@@ -124,21 +127,15 @@
 <!-- ——————————————↓JS—————————分界线———————————————————————— -->
 <script>
 import BUS from '../bus.js'
-
+var FileSaver = require('file-saver');
 export default {
   name: 'markdown-input',
   data() {
     return {
       msg: 'this is from markdown-input.vue',
       textareaShow: true,
-      // markdown 文件已经创建了吗 或者 读取了本地文件
-      fileListShow: false,
-      //  markdown内容
-      markdownData: ''
     }
   },
-  // 组件的双向绑定
-  props: ['value'],
   computed: {
 
     isEditing() {
@@ -146,21 +143,29 @@ export default {
     },
     fileList() {
       return BUS.fileList
+    },
+    markdownData() {
+      return BUS.markdownData
+    },
+    fileListShow() {
+      return BUS.fileListShow
     }
   },
   methods: {
     toggleFileListShow() {
-      this.fileListShow = !this.fileListShow
+      BUS.fileListShow = !BUS.fileListShow
     },
     toggleFoldTextarea() {
       if (!this.isEditing) return
+
+      // if(BUS.fileListShow) BUS.fileListShow=false
 
       this.textareaShow = !this.textareaShow
       // 折叠事件,并且传递出折叠状态（需要响应）
       this.$emit('flod', this.textareaShow)
     },
     // 组件的双向绑定
-    handleInput(event) {
+    input2markdownData(event) {
       BUS.markdownData = event.target.value;
     },
     removeLeftAndTop() {
@@ -176,19 +181,48 @@ export default {
       BUS.createShow = true
     },
     readFile(e) {
-      alert(JSON.parse(localStorage[e.target.textContent]).length)
-      BUS.isEditing = { fileName: e.target.textContent, info: JSON.parse(localStorage[e.target.textContent]) }
-      this.markdownData = "asdasdadas"
+
+      // 切换
+      BUS.save()
+      var fileName = e.target.textContent
+      var infoStr = localStorage[fileName]
+      var info = infoStr === '' ? [] : JSON.parse(infoStr)
+      BUS.isEditing = { fileName, info }
+      BUS.markdownData = localStorage[fileName + '$Data$']
       // 更新编译
+    },
+    save() {
+      BUS.save()
+    },
+    // 定时保存second
+    intervalSave(second) {
+      setInterval(() => {
+        BUS.save()
+        console.log(second + '秒 定时保存成功')
+      }, second * 1000)
+    },
+    exportFile() {
+      if (!BUS.isEditing) {
+        alert("当前没有文件正在编辑")
+        return
+      }
+      var blob = new Blob(['nimei\nheheh\n\n', BUS.markdownData], { type: "text/plain;charset=utf-8" })
+      FileSaver.saveAs(blob, BUS.isEditing.fileName + ".md")
+    },
+    importFile() {
+      BUS.readLocalFileShow = !BUS.readLocalFileShow
     }
   },
   mounted() {
+    // this.intervalSave(30) // 单位秒
     window.addEventListener('resize', this.removeLeftAndTop)
   },
   watch: {
     markdownData: function (v) {
-      BUS.markdownData = v
+      // 更改BUS.markdownData -> computed(markdownData) -> 更新textarea.value
+      this.$refs.textarea.value = v
     }
   }
+
 }
 </script>

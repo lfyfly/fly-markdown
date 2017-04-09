@@ -29,6 +29,7 @@
   }
   .document-info {
     min-width: 300px;
+    text-align: right;
     position: absolute;
     right: 0;
     bottom: .2em;
