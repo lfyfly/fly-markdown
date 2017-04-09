@@ -86,7 +86,7 @@
 <!-- ——————————————↓JS—————————分界线———————————————————————— -->
 <script>
 //import XXX from './components/XXX'
-//import XXX from './components/XXX'
+import BUS from '../bus.js'
 
 
 
@@ -105,7 +105,12 @@ export default {
       catalogArr: []
     }
   },
-  props: ['value'],
+  // props: ['value'],
+  computed:{
+    markdownData () {
+      return BUS.markdownData
+    }
+  },
   methods: {
     toggleCatalog() {
       this.catalogShow = !this.catalogShow
@@ -191,8 +196,8 @@ export default {
     window.addEventListener('resize', this.removeCatalogDisplay)
   },
   watch: {
-    value: function () {
-      this.$refs.markdownContent.innerHTML = marked(this.value)
+    markdownData: function () {
+      this.$refs.markdownContent.innerHTML = marked(this.markdownData)
 
       this.$nextTick(() => {
         this.childrenForEach()

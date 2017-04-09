@@ -3,7 +3,7 @@
 @import '../../scss/style.scss';
 #markdown-input {
   margin: 0 auto;
-  z-index: 999; // 窗口大于800px时 #markdown-input 定位
+  z-index: 998; // 窗口大于800px时 #markdown-input 定位
   top: 50%;
   left: 30%;
   a {
@@ -36,6 +36,14 @@
     float: left;
     color: $font-color-main;
     margin-right: 1em;
+  }
+  .cover {
+    width: 100%;
+    background: #e2e2e2;
+    position: absolute;
+    top: 30px;
+    bottom: 0;
+
   }
   .edit-tip {
     color: red;
@@ -98,10 +106,11 @@
       a(@click="toggleFileListShow",:class="{active:fileListShow}") 文件列表
   textarea(spellcheck="false",
           ref="textarea",
-          :value="markdownData",
+          v-model="markdownData"
           v-show="textareaShow",
           @keydown.tab.prevent="",
-          @input="handleInput")
+          )
+  .cover(v-if="!isEditing")
   pre.edit-tip(v-if="!isEditing").
     请先创建文件
     或者从文件列表加载一个文件
@@ -152,8 +161,7 @@ export default {
     },
     // 组件的双向绑定
     handleInput(event) {
-      var value = event.target.value;
-      this.$emit('input', value);
+      BUS.markdownData = event.target.value;
     },
     removeLeftAndTop() {
       // 桌面端缩放窗口，style属性中的 top left 值，让@media中css值生效
@@ -177,5 +185,10 @@ export default {
   mounted() {
     window.addEventListener('resize', this.removeLeftAndTop)
   },
+  watch: {
+    markdownData: function (v) {
+      BUS.markdownData = v
+    }
+  }
 }
 </script>

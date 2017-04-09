@@ -1,7 +1,7 @@
 <template lang="pug">
 #app
   markdown-header
-  markdown2html(:value="markdownStr")
+  markdown2html()
   markdown-input(v-model="markdownStr", @flod="textareaFold", ref="markdownInput")
   new-markdown
 </template>
