@@ -3,8 +3,9 @@
   markdown-header
   markdown2html()
   markdown-input(v-model="markdownStr", @flod="textareaFold", ref="markdownInput")
-  new-markdown
+  new-markdown(type="create")
   read-local-file
+  rename(:renameFileList="renameFileList")
 </template>
 
 <script>
@@ -15,7 +16,7 @@ import markdown2html from './components/markdown2html/markdown2html.vue'
 import markdownHeader from './components/markdown-header/markdown-header.vue'
 import newMarkdown from './components/new-markdown/new-markdown.vue'
 import readLocalFile from './components/read-local-file/read-local-file.vue'
-
+import rename from './components/rename/rename.vue'
 
 
 
@@ -49,7 +50,9 @@ export default {
     }
   },
   computed: {
-
+    renameFileList() {
+      return BUS.renameFileList
+    }
   },
   methods: {
     // 初始化一些data中的数据
@@ -147,7 +150,8 @@ export default {
     markdown2html,
     markdownHeader,
     newMarkdown,
-    readLocalFile
+    readLocalFile,
+    rename
   },
 }
 </script>

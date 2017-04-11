@@ -73,8 +73,9 @@
     text-align: center;
     box-sizing: border-box;
     li {
+      position: relative;
       margin: 0;
-      a {
+      &>a {
         display: block;
         border-bottom: 1px dashed #777777;
         box-sizing: border-box;
@@ -87,6 +88,64 @@
 
         &:hover {
           color: #f1f1f1;
+        }
+      }
+      .del {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 30px;
+        width: 30px;
+        overflow: hidden;
+        &:hover .del-file {
+          display: block;
+        }
+        .del-file {
+          display: none;
+          font-size: 30px;
+          margin-top: -7px;
+          cursor: pointer;
+          color: red;
+        }
+      }
+      .sure-del {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        line-height: 30px;
+        opacity: 0.7;
+        a {
+          color: #ccc;
+          display: inline-block;
+          margin: 0 .3em;
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          margin-top: 5px;
+          line-height: 20px;
+          border-radius: 50%;
+          &.sure {
+            left: 0;
+            background: #d31919;
+            color: white;
+            &:hover {
+              background: red;
+            }
+          }
+          &.cancel {
+            right: 0;
+            background: green;
+            color: white;
+            line-height: 18px;
+            &:hover {
+              background: #029802;
+            }
+          }
+          &.cancel:hover {
+            color: white;
+          }
         }
       }
     }
@@ -121,7 +180,13 @@
 
   transition(name="fileListSlide")
     ul.fileList(v-show="fileListShow")
-      li(v-for="v in fileList",@click="readFile"): a {{v}}
+      li(v-for="v in fileList",@click="readFile")
+        a {{v}}
+        span.del
+          span.del-file(@click.stop="del") ×
+        .sure-del(style="display:none;",@click.stop="")
+          a.sure(title="确认删除",@click.stop="sureDel") ×
+          a.cancel(title="取消删除",@click.stop="cancelDel") >
 </template>
 
 <!-- ——————————————↓JS—————————分界线———————————————————————— -->
@@ -152,10 +217,40 @@ export default {
     }
   },
   methods: {
+    removeFileData(fileName) {
+      alert(fileName)
+      localStorage.removeItem(fileName)
+      localStorage.removeItem(fileName + '$Data$')
+      // 刷新文件列表
+      BUS.getFileList()
+      // 如果当前文件为删除文件
+      BUS.isEditing = null
+      BUS.markdownData = ''
+    },
+    sureDel(e) {
+      var parentEl = e.target.parentNode
+      console.log(parentEl.previousSibling.previousSibling)
+      var fileName = parentEl.previousSibling.previousSibling.textContent
+      alert(e.target.title)
+      if (e.target.title === '确认删除') {
+        this.removeFileData(fileName)
+      }
+      parentEl.style.display = 'none'
+    },
+    cancelDel(e) {
+      var parentEl = e.target.parentNode
+
+      parentEl.style.display = 'none'
+    },
+    // 点击叉号
+    del(e) {
+      e.target.parentNode.nextSibling.style.display = 'block'
+    },
     toggleFileListShow() {
       BUS.fileListShow = !BUS.fileListShow
     },
     toggleFoldTextarea() {
+      // 无编辑文件时，点击此按钮是无效的
       if (!this.isEditing) return
 
       // if(BUS.fileListShow) BUS.fileListShow=false
@@ -175,6 +270,8 @@ export default {
         this.$el.style = "position:absolute;"
         // textarea缩放产生style的width和height属性， @media导致css无法生效
         this.$refs.textarea.style = ""
+      } else if (winWidth <= 800) {
+        this.$el.style = "position:absolute;"
       }
     },
     newMarkdown() {
@@ -185,10 +282,8 @@ export default {
       // 切换
       BUS.save()
       var fileName = e.target.textContent
-      var infoStr = localStorage[fileName]
-      var info = infoStr === '' ? [] : JSON.parse(infoStr)
-      BUS.isEditing = { fileName, info }
-      BUS.markdownData = localStorage[fileName + '$Data$']
+      BUS.openAfile(fileName)
+
       // 更新编译
     },
     save() {
