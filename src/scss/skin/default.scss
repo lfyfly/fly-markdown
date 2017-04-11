@@ -33,20 +33,13 @@ a {
   }
   .level2 {
     font-size: $font-size-base *0.9;
-     font-weight: bold;
+    font-weight: bold;
   }
   .level3 {
     font-size: $font-size-base *0.8;
   }
 }
 
-.super-markdown {
-  padding: 10px;
-  &>* {
-    margin-top: 1em;
-    margin-bottom: 1em;
-  }
-}
 
 // 标题样式
 .title {

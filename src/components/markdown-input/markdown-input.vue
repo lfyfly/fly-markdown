@@ -319,6 +319,13 @@ export default {
       }, second * 1000)
     },
     exportFile() {
+      // 获取innerHTML
+      var catalogHTMLStr = document.querySelector('.markdown-catalog').innerHTML
+      var contenthtmlStr = document.querySelector('.markdown-html').innerHTML
+      console.log('catalog', catalogHTMLStr)
+      console.log('content', contenthtmlStr)
+
+      return
       BUS.save()
 
       if (!BUS.isEditing) {
