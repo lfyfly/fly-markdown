@@ -4,6 +4,7 @@
   markdown2html()
   markdown-input(v-model="markdownStr", @flod="textareaFold", ref="markdownInput")
   new-markdown(type="create")
+  new-markdown(type="revise")
   read-local-file
   rename(:renameFileList="renameFileList")
 </template>

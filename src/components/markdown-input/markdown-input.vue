@@ -90,13 +90,17 @@
           color: #f1f1f1;
         }
       }
-      .del {
+      .del,
+      .revise {
         position: absolute;
         top: 0;
-        right: 0;
         height: 30px;
         width: 30px;
         overflow: hidden;
+      }
+
+      .del {
+        right: 0;
         &:hover .del-file {
           display: block;
         }
@@ -108,7 +112,25 @@
           color: red;
         }
       }
+      .revise {
+        left: 0;
+
+        &:hover .revise-info {
+          display: block;
+        }
+        .revise-info {
+          display: none;
+          width: 30px;
+          height: 30px;
+          background-image: url('./revise.png');
+          background-size: 20px 20px;
+          background-position: center center;
+          background-repeat: no-repeat;
+        }
+      }
+
       .sure-del {
+        z-index: 10;
         position: absolute;
         top: 0;
         left: 0;
@@ -187,6 +209,8 @@
         .sure-del(style="display:none;",@click.stop="")
           a.sure(title="确认删除",@click.stop="sureDel") ×
           a.cancel(title="取消删除",@click.stop="cancelDel") >
+        span.revise(@click.stop="reviseInfo")
+          span.revise-info
 </template>
 
 <!-- ——————————————↓JS—————————分界线———————————————————————— -->
@@ -217,23 +241,21 @@ export default {
     }
   },
   methods: {
-    removeFileData(fileName) {
-      alert(fileName)
-      localStorage.removeItem(fileName)
-      localStorage.removeItem(fileName + '$Data$')
-      // 刷新文件列表
-      BUS.getFileList()
-      // 如果当前文件为删除文件
-      BUS.isEditing = null
-      BUS.markdownData = ''
+    reviseInfo(e) {
+      var fileName = e.target.parentNode.parentNode.children[0].textContent
+      var fileInfo = BUS.getFileInfo(fileName)
+      // 旧文件名用来删除原有数据
+      fileInfo.oldFileName = fileInfo.fileName
+      BUS.reviseingInfo = fileInfo
     },
+
     sureDel(e) {
       var parentEl = e.target.parentNode
       console.log(parentEl.previousSibling.previousSibling)
       var fileName = parentEl.previousSibling.previousSibling.textContent
       alert(e.target.title)
       if (e.target.title === '确认删除') {
-        this.removeFileData(fileName)
+        BUS.removeFileData(fileName)
       }
       parentEl.style.display = 'none'
     },
