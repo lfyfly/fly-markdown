@@ -319,11 +319,25 @@ export default {
       }, second * 1000)
     },
     exportFile() {
+      BUS.save()
+
       if (!BUS.isEditing) {
         alert("当前没有文件正在编辑")
         return
       }
-      var blob = new Blob(['nimei\nheheh\n\n', BUS.markdownData], { type: "text/plain;charset=utf-8" })
+      var infoWrite2File = ''
+      console.log(BUS.isEditing)
+      if (BUS.isEditing.info.length > 0) {
+        BUS.isEditing.info.forEach((v) => {
+          infoWrite2File += '> **' + v.key + '**: ' + v.value + '\n\n'
+        })
+
+      }
+      infoWrite2File = '---\n\n' + infoWrite2File + '---\n\n'
+
+      alert(infoWrite2File)
+
+      var blob = new Blob([infoWrite2File, BUS.markdownData], { type: "text/plain;charset=utf-8" })
       FileSaver.saveAs(blob, BUS.isEditing.fileName + ".md")
     },
     importFile() {
