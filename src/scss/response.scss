@@ -47,6 +47,7 @@
     }
   }
 }
+
 // ——————————————————————————————————————————————————————
 // 屏幕小于500px,输入框的高度
 // $markdown-input 桌面端小于500px时的高度设置
@@ -54,24 +55,15 @@ $textarea-height: 220px;
 $markdown-option-height: 30px;
 @media screen and (max-width: 500px) {
   div.markdown-header {
-    .document-header {
-      height: $header-height * .6;
-      font-size: 0;
-    }
-    h1.document-title {
+    .document-title,
+    .title-icon {
       font-size: $font-size-l2;
       line-height: $header-height * .6;
     }
-    .github-icon {
-      line-height: $header-height * .6;
-      width: $icon-size* 0.8;
-      height: $icon-size* 0.8;
-      background-size: $icon-size* 0.8 $icon-size* 0.8;
-    }
     div.document-info {
-      text-align: left;
       // 取消绝对定位，文件信息位置变成在标题下面
       position: static;
+      text-align: left;
     }
   }
   div.markdown2html {
@@ -108,7 +100,10 @@ $markdown-option-height: 30px;
 // 不显示文件信息
 @media screen and (max-width: 320px) {
   div.markdown-header {
-    line-height: $header-height;
+    .document-title,
+    .title-icon {
+      line-height: $header-height;
+    }
     .document-info {
       display: none;
     }

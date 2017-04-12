@@ -10,23 +10,16 @@
   position: relative;
 
 
-  .document-title {
+  .document-title,
+  .title-icon {
     font-size: $font-size-l1;
-    height: 100%;
     display: inline-block;
     line-height: $header-height;
-    vertical-align: middle;
+  }
+  .document-title {
     padding: 0 .4em;
   }
-  .github-icon {
-    vertical-align: middle;
-    display: inline-block;
-    width: $icon-size;
-    height: $icon-size;
-    background-image: $icon-url;
-    background-size: $icon-size $icon-size;
-    background-repeat: no-repeat;
-  }
+
   .document-info {
     min-width: 300px;
     text-align: right;
@@ -51,7 +44,7 @@
   a.catalog-btn
   .document-header
     h1.document-title {{isEditing?isEditing.fileName: 'fly-markdown'}}
-    a.github-icon(href="")
+    a.title-icon.iconfont.icon-github
   .document-info
     //- 还未开始编辑显示初始值，如果没有填入信息就不写入info
     .info(v-if="isEditing===null||isEditing!==null&&isEditing.info.length!=0",v-for="v in fileInfo")
@@ -79,12 +72,9 @@ export default {
       return BUS.isEditing
     },
     fileInfo() {
+      // 默认信息
       return BUS.isEditing && BUS.isEditing.info.length > 0 ? BUS.isEditing.info : [{ key: '软件作者', value: 'lfyfly' }, { key: '邮箱', value: '410793635@qq.com' }]
     }
   },
-
-  mounted() {
-    console.log(BUS.isEditing)
-  }
 }
 </script>

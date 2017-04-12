@@ -8,6 +8,11 @@ body {
   min-width: 320px;
 }
 
+.iconfont {
+  color: $font-color-base;
+  font-size: $font-size-base * 1.2;
+}
+
 body,
 a {
   color: $font-color-base;

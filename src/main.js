@@ -7,6 +7,9 @@ import vueDragDrag from 'vue-dragdrag'
 Vue.use(vueDragDrag)
 // 在导出时调用
 
+import './img/icon-font/iconfont.css'
+
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
