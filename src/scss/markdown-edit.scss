@@ -1,0 +1,112 @@
+@import './layout.scss';
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s;
+}
+
+.fade-enter,
+.fade-leave-active {
+  opacity: 0;
+}
+
+.slide2bottom-enter-active,
+.slide2bottom-leave-active {
+  transition: transform .5s;
+}
+
+.slide2bottom-enter,
+.slide2bottom-leave-active {
+  transform: translateY(-150%);
+}
+
+.fileListSlide-enter-active,
+.fileListSlide-leave-active {
+  transition: transform .5s;
+}
+
+.fileListSlide-enter,
+.fileListSlide-leave-active {
+  transform: translateX(-100%);
+}
+
+@media all and (max-width: 800px) {
+  // 调整#markdown-input的位置，这只是桌面端小于800px
+  // 移动端需求不同, 用js操作
+  div#markdown-input {
+    top: auto;
+    left: 10%;
+    top: 60%;
+    .fileList {
+      height: auto;
+      max-height: 210px;
+      left: auto;
+      right: 0;
+      bottom: 100%;
+    }
+    .fileListSlide-enter,
+    .fileListSlide-leave-active {
+      transform: translateX(0);
+      transform: translateY(100%);
+    }
+  }
+}
+
+@media all and (max-width: 500px) {
+  div#markdown-input {
+    top: auto;
+    right: auto;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    textarea {
+      resize: none;
+      width: 100%;
+      height: $textarea-height;
+    }
+    .edit-tip {
+      font-size: 14px;
+    }
+  }
+  div.new-markdown {
+    .dialog {
+      top: 0;
+      text-align: center;
+      width: 100%;
+      .dialog-title {
+        margin-bottom: 1em;
+      }
+      .dialog-content {
+        label,
+        div.label {
+          text-align: center;
+          margin: 0;
+        }
+      }
+      // 双行显示表单
+      input.key,
+      .key {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  }
+  div.read-local-file {
+    width: auto;
+    margin: 0 20px;
+    bottom: auto;
+    top: 15%;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  div.new-markdown {
+    font-size: $font-size-sm;
+    input,
+    input.key {
+      font-size: $font-size-sm;
+    }
+  }
+  a.dialog-btns {
+    font-size: $font-size-sm;
+  }
+}
