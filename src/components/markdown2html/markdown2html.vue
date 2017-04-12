@@ -83,15 +83,16 @@ export default {
   data() {
     return {
       msg: 'this is from markdown2html.vue',
-      catalogShow: false,
       oldWindowWidth: 0,
       titleElsArr: [],
       catalogArr: []
     }
   },
-  // props: ['value'],
-  computed:{
-    markdownData () {
+  computed: {
+    catalogShow() {
+      return BUS.catalogShow
+    },
+    markdownData() {
       return BUS.markdownData
     }
   },
@@ -99,14 +100,14 @@ export default {
 
     // 当屏幕宽度大于800时 有media 来控制目录显示
     removeCatalogDisplay() {
-      var winWidth =  window.innerWidth
+      var winWidth = window.innerWidth
       // 不变 发生在移动端（输入法回收或者进入时会触发 resie）
-      if(winWidth === this.oldWindowWidth) return
+      if (winWidth === this.oldWindowWidth) return
       this.oldWindowWidth = winWidth
       if (window.innerWidth > 800) {
-        this.catalogShow = true
-      }else{
-        this.catalogShow = false
+        BUS.catalogShow = true
+      } else {
+        BUS.catalogShow = false
       }
     },
 

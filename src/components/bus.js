@@ -4,7 +4,8 @@ export default new Vue({
   data: {
     // 移动端判断
     isMobile: false,
-
+    // 目录的显示状态
+    catalogShow: false,
 
     // 创建文件界面是否显示
     createShow: false,
@@ -14,8 +15,8 @@ export default new Vue({
     reviseingInfo: null,
 
     // 时候已经加载文档或创建一个文档，进入编辑模式
-    // isEditing正在编辑的文件数据对象（包括, fileName info）
-    isEditing: null,
+    // editingFile正在编辑的文件数据对象（包括, fileName info）
+    editingFile: null,
     // 正在编辑文件的markdown数据
     // 与markdown中同步
     markdownData: '',
@@ -62,7 +63,7 @@ export default new Vue({
       // 刷新文件列表
       this.getFileList()
       // 如果当前文件为删除文件
-      this.isEditing = null
+      this.editingFile = null
       this.markdownData = ''
     },
     getFileInfo(fileName) {
@@ -72,7 +73,7 @@ export default new Vue({
     },
     openAfile(fileName) {
 
-      this.isEditing = this.getFileInfo(fileName)
+      this.editingFile = this.getFileInfo(fileName)
       this.markdownData = localStorage[fileName + '$Data$']
     },
     saveFiles2LocalStorage(fileArr) {
@@ -101,9 +102,9 @@ export default new Vue({
     // - 切换文件保存
     // - 定时保存
     save() {
-      if (this.isEditing && this.isEditing.fileName) {
-        localStorage[this.isEditing.fileName + '$Data$'] = this.markdownData
-        console.log(this.isEditing.fileName + ' 保存成功')
+      if (this.editingFile && this.editingFile.fileName) {
+        localStorage[this.editingFile.fileName + '$Data$'] = this.markdownData
+        console.log(this.editingFile.fileName + ' 保存成功')
       }
     },
 

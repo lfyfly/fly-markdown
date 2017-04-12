@@ -8,6 +8,7 @@
     document.documentElement.style.fontSize = window.innerWidth / 3.75 + 'px';
     window.addEventListener('resize', function () {
       console.log('resize')
+      if(window.innerWidth<320) return
       document.documentElement.style.fontSize = window.innerWidth / 3.75 + 'px';
     })
   </script>

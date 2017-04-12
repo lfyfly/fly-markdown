@@ -43,6 +43,7 @@
       right: 0;
       bottom: 100%;
     }
+    // 小于800px 从下到上滑动目录
     .fileListSlide-enter,
     .fileListSlide-leave-active {
       transform: translateX(0);
@@ -51,7 +52,7 @@
   }
 }
 
-@media all and (max-width: 500px) {
+@media all and (max-width: 440px) {
   div#markdown-input {
     top: auto;
     right: auto;
@@ -72,8 +73,9 @@
       top: 0;
       text-align: center;
       width: 100%;
+      // margin: .3rem;
       .dialog-title {
-        margin-bottom: 1em;
+        margin-bottom: $font-size-xs-rem;
       }
       .dialog-content {
         label,
@@ -81,12 +83,16 @@
           text-align: center;
           margin: 0;
         }
-      }
-      // 双行显示表单
-      input.key,
-      .key {
-        width: 100%;
-        text-align: center;
+        // 双行显示表单
+        input.key,
+        .key {
+          font-size: 14px;
+          width: 100%;
+          text-align: center;
+        }
+        input {
+          font-size: 14px;
+        }
       }
     }
   }

@@ -20,6 +20,8 @@ a {
   font-family: $font-family;
 }
 
+
+
 .markdown-catalog {
   // 目录标题缩进
   $catalog-margin: .8em;
@@ -49,6 +51,10 @@ a {
 .title {
   display: block;
   padding: .4em 0;
+}
+
+.markdown-html>*{
+  margin-bottom: .4em;
 }
 
 .markdown-html {
@@ -141,7 +147,7 @@ a {
   }
   // 引用
   blockquote {
-    border-left: .4rem #e2e2e2 solid;
+    border-left: .4em #e2e2e2 solid;
     padding-left: 1em;
   }
   blockquote p {

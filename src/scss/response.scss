@@ -1,5 +1,8 @@
 @import './style.scss';
 @media all and (max-width:800px) {
+  table {
+    width: 100%;
+  }
   div.markdown-header {
     padding-left: $font-size-l1;
     margin: 0;
@@ -32,6 +35,7 @@
       z-index: 1000;
       background: $catalog-bgcolor;
       left: 0;
+      border: none;
       a {
         color: #ccc;
       }
@@ -71,41 +75,40 @@ $markdown-option-height-rem: pxTOrem($markdown-option-height);
       .info-key,
       .info-value a {
         font-size: $font-size-sm-rem;
-        line-height: 1;
       }
     }
   }
   div.markdown2html {
     top: $header-height-rem + $separation-rem / 2;
     // 文本域高度和操作栏高度
-    bottom: $textarea-height-rem + $markdown-option-height-rem;
+    // 这只是pc端,使用px，固定不变
+    // 移动端需要用js判断（在App.vue)
+    bottom: $textarea-height + $markdown-option-height;
     .markdown-html {
       border-bottom: 0px solid;
     }
     .markdown-catalog {
       border: none;
     }
-  }
-  // 屏幕小于500px的时候标题字体减小
-  .markdown-html {
+    // 屏幕小于500px的时候标题字体减小
     // 因为markdown-catalog 隐藏
     .markdown-html {
       margin: 0;
-    }
-    h1 a.title {
-      font-size: $font-size-l2-rem;
-    }
-    h2 a.title {
-      font-size: $font-size-l3-rem;
-    }
-    h3 a.title {
-      font-size: $font-size-l4-rem;
-    }
-    h4 a.title {
-      font-size: $font-size-l5-rem;
-    }
-    h5 a.title {
-      font-size: $font-size-sm-rem;
+      h1 a.title {
+        font-size: $font-size-l2;
+      }
+      h2 a.title {
+        font-size: $font-size-l3;
+      }
+      h3 a.title {
+        font-size: $font-size-l4;
+      }
+      h4 a.title {
+        font-size: $font-size-l5;
+      }
+      h5 a.title {
+        font-size: $font-size-sm;
+      }
     }
   }
 }

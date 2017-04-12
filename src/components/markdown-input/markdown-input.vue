@@ -185,7 +185,7 @@
       //- a(@click="save") 保存
       a(@click="importFile") 导入
       a(@click="exportFile") 导出
-      a(@click="newMarkdown",:class="{active:!isEditing}") 新建文件
+      a(@click="newMarkdown",:class="{active:!editingFile}") 新建文件
       a(@click="toggleFileListShow",:class="{active:fileListShow}") 文件列表
   textarea(spellcheck="false",
           ref="textarea",
@@ -195,8 +195,8 @@
           @input="input2markdownData",
 
           )
-  .cover(v-if="!isEditing")
-  pre.edit-tip(v-if="!isEditing").
+  .cover(v-if="!editingFile")
+  pre.edit-tip(v-if="!editingFile").
     请先创建文件
     或者从文件列表加载一个文件
     再开始编辑
@@ -228,14 +228,17 @@ export default {
   },
   computed: {
 
-    isEditing() {
-      return BUS.isEditing
+    editingFile() {
+      return BUS.editingFile
     },
     fileList() {
       return BUS.fileList
     },
     markdownData() {
       return BUS.markdownData
+    },
+    fileListShow() {
+      return BUS.fileListShow
     }
   },
   methods: {
@@ -271,7 +274,7 @@ export default {
     },
     toggleFoldTextarea() {
       // 无编辑文件时，点击此按钮是无效的
-      if (!this.isEditing) return
+      if (!this.editingFile) return
 
       // if(BUS.fileListShow) BUS.fileListShow=false
 
@@ -326,14 +329,14 @@ export default {
       return
       BUS.save()
 
-      if (!BUS.isEditing) {
+      if (!BUS.editingFile) {
         alert("当前没有文件正在编辑")
         return
       }
       var infoWrite2File = ''
-      console.log(BUS.isEditing)
-      if (BUS.isEditing.info.length > 0) {
-        BUS.isEditing.info.forEach((v) => {
+      console.log(BUS.editingFile)
+      if (BUS.editingFile.info.length > 0) {
+        BUS.editingFile.info.forEach((v) => {
           infoWrite2File += '> **' + v.key + '**: ' + v.value + '\n\n'
         })
 
@@ -343,7 +346,7 @@ export default {
       alert(infoWrite2File)
 
       var blob = new Blob([infoWrite2File, BUS.markdownData], { type: "text/plain;charset=utf-8" })
-      FileSaver.saveAs(blob, BUS.isEditing.fileName + ".md")
+      FileSaver.saveAs(blob, BUS.editingFile.fileName + ".md")
     },
     importFile() {
       BUS.readLocalFileShow = !BUS.readLocalFileShow

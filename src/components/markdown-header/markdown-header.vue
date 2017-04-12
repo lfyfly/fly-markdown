@@ -50,11 +50,11 @@
 .markdown-header
   a.catalog-btn.iconfont.icon-mulu(@click="toggleCatalog")
   .document-header
-    h1.document-title {{isEditing?isEditing.fileName: 'fly-markdown'}}
+    h1.document-title {{editingFile?editingFile.fileName: 'fly-markdown'}}
     a.title-icon.iconfont.icon-github
   .document-info
     //- 还未开始编辑显示初始值，如果没有填入信息就不写入info
-    .info(v-if="isEditing===null||isEditing!==null&&isEditing.info.length!=0",v-for="v in fileInfo")
+    .info(v-if="editingFile===null||editingFile!==null&&editingFile.info.length!=0",v-for="v in fileInfo")
       span().info-key {{v.key+': '}}
       span().info-value: a {{v.value}}
 
@@ -75,20 +75,20 @@ export default {
     }
   },
   computed: {
-    isEditing() {
-      return BUS.isEditing
+    editingFile() {
+      return BUS.editingFile
     },
     fileInfo() {
       // 默认信息
-      return BUS.isEditing && BUS.isEditing.info.length > 0 ? BUS.isEditing.info : [{ key: '软件作者', value: 'lfyfly' }, { key: '邮箱', value: '410793635@qq.com' }]
+      return BUS.editingFile && BUS.editingFile.info.length > 0 ? BUS.editingFile.info : [{ key: '软件作者', value: 'lfyfly' }, { key: '邮箱', value: '410793635@qq.com' }]
     },
-    fileListShow() {
-      return BUS.fileListShow
+    catalogShow() {
+      return BUS.catalogShow
     }
   },
   methods: {
     toggleCatalog() {
-      this.catalogShow = !this.catalogShow
+      BUS.catalogShow = !BUS.catalogShow
     },
   }
 }

@@ -1,6 +1,7 @@
 <!-- —————————————↓SCSS———————分界线————————————————————————— -->
 <style lang="scss">
-@import '../../scss/style.scss';
+@import '../../scss/skin/default.scss';
+
 .new-markdown {
   z-index: 9999;
 
@@ -30,7 +31,7 @@
     margin-bottom: 2em;
   }
   .dialog-content {
-    margin-bottom: 4em;
+    margin-bottom: 3.5em;
 
     label,
     .label {
@@ -49,7 +50,6 @@
       font-size: $font-size-base;
       line-height: 2;
       height: 2em;
-
       width: 220px;
     }
     input.value {
@@ -279,7 +279,7 @@ export default {
         BUS.$emit('created', this.createInfo)
         BUS.createShow = false
         // 正在编辑文件的文件信息
-        BUS.isEditing = this.createInfo
+        BUS.editingFile = this.createInfo
         this.resetInfoValue()
       }
 
