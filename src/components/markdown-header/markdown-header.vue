@@ -1,7 +1,7 @@
 <!-- —————————————↓SCSS———————分界线————————————————————————— -->
 <style lang="scss">
-@import '../../scss/layout.scss';
-@import '../../scss/style.scss';
+@import '../../scss/skin/default.scss';
+
 
 .markdown-header {
   height: $header-height;

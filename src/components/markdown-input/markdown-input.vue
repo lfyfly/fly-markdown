@@ -1,6 +1,7 @@
 <!-- —————————————↓SCSS———————分界线————————————————————————— -->
 <style lang="scss">
-@import '../../scss/style.scss';
+@import '../../scss/skin/default.scss';
+
 #markdown-input {
   margin: 0 auto;
   z-index: 998; // 窗口大于800px时 #markdown-input 定位

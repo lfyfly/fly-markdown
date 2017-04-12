@@ -1,12 +1,11 @@
 @import './style.scss';
-@import './layout.scss';
 @media all and (max-width:800px) {
   div.markdown-header {
     padding-left: $font-size-l2*2;
     margin: 0;
     div.document-info {
       .info-key,
-      .info-value a{
+      .info-value a {
         font-size: $font-size-sm;
       }
     }
@@ -20,7 +19,7 @@
       display: block;
     }
     // catalog 切换动画
-    // 屏幕大于800px的时候不适用动画
+    // 屏幕大于800px的时候不使用切换动画
     .slide-leave-active,
     .slide-enter-active {
       transition: transform .5s;
@@ -36,7 +35,7 @@
     // z-index大于#markdown-input
     .markdown-catalog {
       z-index: 1000;
-      background: rgba(0, 0, 0, .8);
+      background: $catalog-bgcolor;
       left: 0;
       a {
         color: #ccc;
@@ -48,8 +47,11 @@
     }
   }
 }
-
+// ——————————————————————————————————————————————————————
 // 屏幕小于500px,输入框的高度
+// $markdown-input 桌面端小于500px时的高度设置
+$textarea-height: 220px;
+$markdown-option-height: 30px;
 @media screen and (max-width: 500px) {
   div.markdown-header {
     .document-header {
@@ -61,23 +63,19 @@
       line-height: $header-height * .6;
     }
     .github-icon {
-      line-height: 40px;
-      margin-top: -4px;
+      line-height: $header-height * .6;
       width: $icon-size* 0.8;
       height: $icon-size* 0.8;
       background-size: $icon-size* 0.8 $icon-size* 0.8;
     }
     div.document-info {
       text-align: left;
-
-      & a {
-        font-size: $font-size-xs;
-      }
-      // 取消绝对定位
+      // 取消绝对定位，文件信息位置变成在标题下面
       position: static;
     }
   }
   div.markdown2html {
+    // 文本域高度和操作栏高度
     bottom: $textarea-height + $markdown-option-height;
     .markdown-html {
       border-bottom: 0px solid;
@@ -87,7 +85,7 @@
     }
   }
   // 屏幕小于500px的时候标题字体减小
-  .markdown2html {
+  .markdown-html {
     h1 a.title {
       font-size: $font-size-l2;
     }
@@ -105,13 +103,14 @@
     }
   }
 }
+
 // 超小屏幕
+// 不显示文件信息
 @media screen and (max-width: 320px) {
-  div.markdown-header{
-    .document-info>.info:last-child{
+  div.markdown-header {
+    line-height: $header-height;
+    .document-info {
       display: none;
     }
   }
-
 }
-

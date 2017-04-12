@@ -10,7 +10,10 @@ $base-color-light: lighten($base-color, $light-rate);
 $base-color-dark: darken($base-color, $light-rate);
 // 文字
 // $font-family: 'microsoft yahei';
-$font-family: Verdana, Arial, Helvetica, sans-serif;
+$font-family: Verdana,
+Arial,
+Helvetica,
+sans-serif;
 $font-color-base: $base-color;
 $line-style: 1px solid #ccc;
 $font-size-base: 16px;
@@ -23,36 +26,18 @@ $font-size-l4: round($font-size-base * $font-rate);
 $font-size-l3: round($font-size-l4 * $font-rate);
 $font-size-l2: round($font-size-l3 * $font-rate);
 $font-size-l1: round($font-size-l2 * $font-rate);
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 1s;
-}
+//_______________________________________________________________________
+//-----------------------布局------------------------------
+// 头部的高度
+$header-height:60px;
+// 元素块之间的间隔
+$separation:10px;
+$icon-size:$font-size-l1*1.2;
+$icon-url: url('../../img/icon/github_icon_1.jpg');
+$catolog-width:220px;
+$catalog-bgcolor:rgba(0, 0, 0, .8);
 
-.fade-enter,
-.fade-leave-active {
-  opacity: 0;
-}
-
-.slide2bottom-enter-active,
-.slide2bottom-leave-active {
-  transition: transform .5s;
-}
-
-.slide2bottom-enter,
-.slide2bottom-leave-active {
-  transform: translateY(-150%);
-}
-
-.fileListSlide-enter-active,
-.fileListSlide-leave-active {
-  transition: transform .5s;
-}
-
-.fileListSlide-enter,
-.fileListSlide-leave-active {
-  transform: translateX(-100%);
-}
-
+// 文字溢出隐藏
 %fontOver {
   white-space: nowrap;
   overflow: hidden;

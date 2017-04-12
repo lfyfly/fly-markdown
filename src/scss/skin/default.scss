@@ -2,7 +2,7 @@
 @import '../style.scss';
 @import '../response.scss';
 // 项目打包生成html文件，是不包括#markdown-input的
-@import '../markdown-input.scss';
+@import '../markdown-edit.scss';
 // 布局
 body {
   min-width: 320px;
@@ -16,154 +16,135 @@ a {
 }
 
 .markdown-catalog {
+  // 目录标题缩进
+  $catalog-margin: .8em;
   &>ul {
-    margin-top: 1em;
-    margin-left: .8em;
+    // margin-top: $catalog-margin;
+    margin-left: $catalog-margin;
   }
   li {
     list-style: none;
-    margin: 0!important;
-  }
-  a {
-    padding: 0!important;
   }
   .level1 {
     font-size: $font-size-base;
     font-weight: bold;
   }
   .level2 {
-    font-size: $font-size-base *0.9;
+    font-size: $font-size-base * 0.9;
     font-weight: bold;
+    margin-left: $catalog-margin;
   }
   .level3 {
-    font-size: $font-size-base *0.8;
+    font-size: $font-size-base * 0.8;
+    margin-left: $catalog-margin * 2;
   }
 }
 
-
-// 标题样式
+// 标题样式(包括目录和内容区域的)
 .title {
   display: block;
   padding: .4em 0;
 }
 
-h1 a.title,
-h2 a.title {
-  border-bottom: $line-style;
-}
-
-h1 a.title {
-  font-size: $font-size-l1;
-}
-
-h2 a.title {
-  font-size: $font-size-l2;
-}
-
-h3 a.title {
-  font-size: $font-size-l3;
-}
-
-h4 a.title {
-  font-size: $font-size-l4;
-}
-
-h5 a.title {
-  font-size: $font-size-base;
-}
-
-// 段落样式
-p {
-  font-size: $font-size-base;
-  text-indent: 2em;
-  margin: .4em 0;
-}
-
-// ul  ol
-ul,
-ol {
-  margin-left: 2em;
-}
-
-ul ul,
-ul ol,
-ol ul,
-ol ol {
-  margin: 0.5em 0 0.5em 1.5em;
-}
-
-// 一级
-ul .s-list-title,
-ol .s-list-title {
-  font-size: $font-size-l4;
-  font-weight: bold;
-  padding: .2em 0;
-}
-
-// 二级
-ul ul li,
-ul ol li,
-ol ul li,
-ol ol li {
-  font-size: $font-size-sm;
-}
-
-ul ul .s-list-title,
-ul ol .s-list-title,
-ol ul .s-list-title,
-ol ol .s-list-title {
-  font-size: $font-size-l5;
-  font-weight: bold;
-  padding: .2em 0;
-}
-
-ul>li,
-ol>li {
-  margin: .4em 0;
-}
-
-table {
-  border-collapse: collapse;
-  border: 1px solid $base-color-light;
-}
-
-table caption {
-  font-size: $font-size-l4;
-  padding: .4em 0;
-  font-weight: bold;
-}
-
-table td,
-table th {
-  padding: .4em 1em;
-  text-align: center;
-  border: 1px solid $base-color-light;
-}
-
-table thead th {
-  color: $base-color-dark;
-  font-weight: bold;
-}
-
-table tbody tr {
-  color: $font-color-base;
-}
-
-table tbody tr:nth-child(odd) {
-  background: #e2e2e2;
-}
-
-// 引用
-blockquote {
-  border-left: .4rem #e2e2e2 solid;
-}
-
-blockquote p {
-  text-indent: 1em;
-}
-
-// 代码块
-pre {
-  margin-top: 1em;
-  margin-bottom: 1em;
+.markdown-html {
+  h1 a.title,
+  h2 a.title {
+    border-bottom: $line-style;
+  }
+  h1 a.title {
+    font-size: $font-size-l1;
+  }
+  h2 a.title {
+    font-size: $font-size-l2;
+  }
+  h3 a.title {
+    font-size: $font-size-l3;
+  }
+  h4 a.title {
+    font-size: $font-size-l4;
+  }
+  h5 a.title {
+    font-size: $font-size-base;
+  }
+  // 段落样式
+  p {
+    font-size: $font-size-base;
+    // text-indent: 2em;
+    margin: .4em 0;
+  }
+  // ul  ol
+  ul,
+  ol {
+    margin-left: 2em;
+  }
+  ul ul,
+  ul ol,
+  ol ul,
+  ol ol {
+    margin: 0.5em 0 0.5em 1.5em;
+  }
+  // 一级
+  ul .s-list-title,
+  ol .s-list-title {
+    font-size: $font-size-l4;
+    font-weight: bold;
+    padding: .2em 0;
+  }
+  // 二级
+  ul ul li,
+  ul ol li,
+  ol ul li,
+  ol ol li {
+    font-size: $font-size-sm;
+  }
+  ul ul .s-list-title,
+  ul ol .s-list-title,
+  ol ul .s-list-title,
+  ol ol .s-list-title {
+    font-size: $font-size-l5;
+    font-weight: bold;
+    padding: .2em 0;
+  }
+  ul>li,
+  ol>li {
+    margin: .4em 0;
+  }
+  table {
+    border-collapse: collapse;
+    border: 1px solid $base-color-light;
+  }
+  table caption {
+    font-size: $font-size-l4;
+    padding: .4em 0;
+    font-weight: bold;
+  }
+  table td,
+  table th {
+    padding: .4em 1em;
+    text-align: center;
+    border: 1px solid $base-color-light;
+  }
+  table thead th {
+    color: $base-color-dark;
+    font-weight: bold;
+  }
+  table tbody tr {
+    color: $font-color-base;
+  }
+  table tbody tr:nth-child(odd) {
+    background: #e2e2e2;
+  }
+  // 引用
+  blockquote {
+    border-left: .4rem #e2e2e2 solid;
+    padding-left: 1em;
+  }
+  blockquote p {
+    text-indent: 0;
+  }
+  // 代码块
+  pre {
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
 }
