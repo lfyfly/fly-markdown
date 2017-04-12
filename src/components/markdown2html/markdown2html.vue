@@ -1,8 +1,7 @@
 <!-- —————————————↓SCSS———————分界线————————————————————————— -->
 <style lang="scss">
 @import '../../scss/skin/default.scss';
-@import '../../scss/layout.scss';
-@import '../../scss/style.scss';
+
 
 .markdown2html {
   width: 100%;
@@ -13,21 +12,7 @@
   $catalog-btn-color: #606060;
   $catalog-btn-height-s: $catalog-btn-height / 5;
 
-  .catalog-btn {
-    position: absolute;
-    width: 24px;
-    height: $catalog-btn-height;
-    box-sizing: border-box;
-    border-top: $catalog-btn-height-s solid $catalog-btn-color;
-    border-bottom: $catalog-btn-height-s solid $catalog-btn-color;
-    padding: $catalog-btn-height-s 0;
-    background: $catalog-btn-color;
-    background-clip: content-box;
 
-    left: 8px;
-    top: - ($catalog-btn-height +($header-height - $catalog-btn-height) /2); // 默认隐藏
-    display: none;
-  }
 
   .markdown-catalog {
     position: absolute;
@@ -67,7 +52,6 @@
 <!-- —————————————↓HTML————————分界线———————————————————————— -->
 <template lang="pug">
 .markdown2html
-  a.catalog-btn(@click="toggleCatalog")
   transition(name="slide")
     .markdown-catalog(v-show="catalogShow", ref="catalog")
       ul(v-for="v1 in catalogArr")
@@ -112,11 +96,7 @@ export default {
     }
   },
   methods: {
-    toggleCatalog() {
-      this.catalogShow = !this.catalogShow
 
-      // catalogEl.style.display = getComputedStyle(catalogEl, null).display === 'none' ? 'block' : 'none'
-    },
     // 当屏幕宽度大于800时 有media 来控制目录显示
     removeCatalogDisplay() {
       var winWidth =  window.innerWidth

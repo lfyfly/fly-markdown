@@ -2,6 +2,10 @@ import Vue from 'vue'
 
 export default new Vue({
   data: {
+    // 移动端判断
+    isMobile: false,
+
+
     // 创建文件界面是否显示
     createShow: false,
     // 修改文件名
@@ -30,6 +34,17 @@ export default new Vue({
 
   },
   methods: {
+    // ———————————————————————————初始化函数—————————————————————————————————————
+    init() {
+      this.initIsMobile()
+    },
+    // 初始化的函数 ------------------------
+    initIsMobile() {
+      if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|ios)/i)) this.isMobile = true
+    },
+    // ———————————————————————————初始化函数结束——————————————————————————————————
+
+
     // 修改localStorage信息
     reviseInfo(fileName) {
       // 弹出
@@ -104,7 +119,7 @@ export default new Vue({
   },
   created() {
     // localStorage.clear()
-
+    this.init()
 
     this.getFileList()
   },
@@ -168,7 +183,7 @@ export default new Vue({
       this.reviseShow = false
 
       // 打开修改的文件
-        this.openAfile(this.reviseingInfo.fileName)
+      this.openAfile(this.reviseingInfo.fileName)
 
       // 清除 需要修改的文件
       this.reviseingInfo = null

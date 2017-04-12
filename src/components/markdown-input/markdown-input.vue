@@ -236,9 +236,6 @@ export default {
     },
     markdownData() {
       return BUS.markdownData
-    },
-    fileListShow() {
-      return BUS.fileListShow
     }
   },
   methods: {

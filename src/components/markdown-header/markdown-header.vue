@@ -9,6 +9,13 @@
   margin: 0 $separation;
   position: relative;
 
+  .catalog-btn {
+    position: absolute;
+    left: .4em;
+    line-height: $header-height;
+    font-size: $font-size-l3;
+    display: none; // 屏幕宽度大于800px默认隐藏
+  }
 
   .document-title,
   .title-icon {
@@ -41,7 +48,7 @@
 <!-- —————————————↓HTML————————分界线———————————————————————— -->
 <template lang="pug">
 .markdown-header
-  a.catalog-btn
+  a.catalog-btn.iconfont.icon-mulu(@click="toggleCatalog")
   .document-header
     h1.document-title {{isEditing?isEditing.fileName: 'fly-markdown'}}
     a.title-icon.iconfont.icon-github
@@ -74,7 +81,15 @@ export default {
     fileInfo() {
       // 默认信息
       return BUS.isEditing && BUS.isEditing.info.length > 0 ? BUS.isEditing.info : [{ key: '软件作者', value: 'lfyfly' }, { key: '邮箱', value: '410793635@qq.com' }]
+    },
+    fileListShow() {
+      return BUS.fileListShow
     }
   },
+  methods: {
+    toggleCatalog() {
+      this.catalogShow = !this.catalogShow
+    },
+  }
 }
 </script>

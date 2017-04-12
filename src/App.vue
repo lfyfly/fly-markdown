@@ -25,8 +25,6 @@ export default {
   name: 'app',
   data() {
     return {
-      // 时候为移动设备
-      isMobile: false,
       // 双向绑定 markdown-input组件
       markdownStr: "",
 
@@ -58,7 +56,6 @@ export default {
   methods: {
     // 初始化一些data中的数据
     init() {
-      this.getIsMobile()
       this.getInputScrollEl()
       this.getHtmlScrollEl()
       // markdown转义为html后转进的日期元素
@@ -78,13 +75,9 @@ export default {
     getMarkdownInputEl() {
       this.markdownInputEl = this.$refs.markdownInput.$el
     },
-    getIsMobile() {
-      if (navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i)) {
-        this.isMobile = true
-      }
-    },
+
     textareaFold() {
-      if (this.isMobile || window.innerWidth <= 500) {
+      if (BUS.isMobile || window.innerWidth <= 500) {
         // DOM 重渲了
         this.$nextTick(() => {
           this.htmlContainerEl.style.bottom = this.markdownInputEl.offsetHeight + 'px'
@@ -108,7 +101,7 @@ export default {
       this.inputScrollEl.addEventListener('scroll', inputScrollFn)
     },
     mobileInput() {
-      if (this.isMobile) {
+      if (BUS.isMobile) {
         var oInput = document.querySelector('#markdown-input')
         var oTextarea = oInput.getElementsByTagName('textarea')[0]
         if (window.innerWidth <= 500) {
@@ -154,6 +147,7 @@ export default {
     readLocalFile,
     rename
   },
+
 }
 </script>
 

@@ -200,6 +200,8 @@ export default {
     }
   },
   methods: {
+
+
     disabledAllInput() {
       var inputEls = document.querySelectorAll('.file-name-input')
       for (var i = 0; i < inputEls.length; i++) {

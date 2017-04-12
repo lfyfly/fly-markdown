@@ -1,5 +1,5 @@
-// 色彩
-// 随着主色变化的文字颜色
+//_______________________________________________________________________
+//-----------------------色彩------------------------------
 $main-color: black;
 // 随着主题变化的文字颜色
 $font-color-main: #ccc;
@@ -8,14 +8,15 @@ $base-color: #303030;
 $light-rate: 40%;
 $base-color-light: lighten($base-color, $light-rate);
 $base-color-dark: darken($base-color, $light-rate);
-// 文字
-// $font-family: 'microsoft yahei';
+//_______________________________________________________________________
+//-----------------------文字-----------------------------
 $font-family: Verdana,
 Arial,
 Helvetica,
 sans-serif;
 $font-color-base: $base-color;
 $line-style: 1px solid #ccc;
+// 基础字体大小
 $font-size-base: 16px;
 // 字体比例
 $font-rate: 1.16;
@@ -34,11 +35,34 @@ $header-height:60px;
 $separation:10px;
 $icon-url: url('../../img/icon/github_icon_1.jpg');
 $catolog-width:220px;
-$catalog-bgcolor:rgba(0, 0, 0, .8);
-
+$catalog-bgcolor:rgba(0,
+0,
+0,
+.8);
 // 文字溢出隐藏
 %fontOver {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+//_______________________________________________________________________
+//-----------------------rem------------------------------
+$html-font-size: 100px;
+@function pxTOrem ($px) {
+  @return $px / $html-font-size * 1rem
+}
+
+$phone-rate: .8; // 移动端尺寸相对于桌面端 比例
+$font-size-base-rem: pxTOrem($font-size-base * $phone-rate);
+$font-size-sm-rem: $font-size-base-rem / $font-rate;
+$font-size-xs-rem: $font-size-sm-rem / $font-rate;
+$font-size-l5-rem: $font-size-base-rem;
+$font-size-l4-rem: $font-size-base-rem * $font-rate;
+$font-size-l3-rem: $font-size-l4-rem * $font-rate;
+$font-size-l2-rem: $font-size-l3-rem * $font-rate;
+$font-size-l1-rem: $font-size-l2-rem * $font-rate;
+// --布局 rem ----
+$header-height-rem:pxTOrem($header-height * $phone-rate);
+$separation-rem: pxTOrem($separation * $phone-rate);
+$catolog-width-rem: pxTOrem($catolog-width * $phone-rate);

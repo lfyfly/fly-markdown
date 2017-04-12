@@ -1,23 +1,14 @@
 @import './style.scss';
 @media all and (max-width:800px) {
   div.markdown-header {
-    padding-left: $font-size-l2*2;
+    padding-left: $font-size-l1;
     margin: 0;
-    div.document-info {
-      .info-key,
-      .info-value a {
-        font-size: $font-size-sm;
-      }
-    }
-    h1.document-title {
-      padding-left: 0;
+    a.catalog-btn {
+      display: block;
     }
   }
   div.markdown2html {
     bottom: 0;
-    a.catalog-btn {
-      display: block;
-    }
     // catalog 切换动画
     // 屏幕大于800px的时候不使用切换动画
     .slide-leave-active,
@@ -32,7 +23,11 @@
     .med-line {
       display: none;
     }
-    // z-index大于#markdown-input
+    // 目录隐藏，去除margin
+    .markdown-html {
+      margin: 0;
+    }
+    // z-index大于
     .markdown-catalog {
       z-index: 1000;
       background: $catalog-bgcolor;
@@ -40,10 +35,6 @@
       a {
         color: #ccc;
       }
-    }
-    // 因为markdown-catalog 隐藏
-    .markdown-html {
-      margin: 0;
     }
   }
 }
@@ -53,22 +44,41 @@
 // $markdown-input 桌面端小于500px时的高度设置
 $textarea-height: 220px;
 $markdown-option-height: 30px;
+$textarea-height-rem: pxTOrem($textarea-height);
+$markdown-option-height-rem: pxTOrem($markdown-option-height);
 @media screen and (max-width: 500px) {
   div.markdown-header {
+    margin: 0;
+    padding-left: $font-size-l2-rem *2;
+    height: $header-height-rem;
+    .catalog-btn {
+      position: absolute;
+      left: .4em;
+      line-height: $header-height-rem;
+      font-size: $font-size-l3-rem;
+    }
     .document-title,
     .title-icon {
-      font-size: $font-size-l2;
-      line-height: $header-height * .6;
+      font-size: $font-size-l2-rem;
+      line-height: $header-height-rem * .6;
+      padding-left: 0;
     }
     div.document-info {
       // 取消绝对定位，文件信息位置变成在标题下面
       position: static;
       text-align: left;
+      line-height: $font-size-sm-rem;
+      .info-key,
+      .info-value a {
+        font-size: $font-size-sm-rem;
+        line-height: 1;
+      }
     }
   }
   div.markdown2html {
+    top: $header-height-rem + $separation-rem / 2;
     // 文本域高度和操作栏高度
-    bottom: $textarea-height + $markdown-option-height;
+    bottom: $textarea-height-rem + $markdown-option-height-rem;
     .markdown-html {
       border-bottom: 0px solid;
     }
@@ -78,34 +88,38 @@ $markdown-option-height: 30px;
   }
   // 屏幕小于500px的时候标题字体减小
   .markdown-html {
+    // 因为markdown-catalog 隐藏
+    .markdown-html {
+      margin: 0;
+    }
     h1 a.title {
-      font-size: $font-size-l2;
+      font-size: $font-size-l2-rem;
     }
     h2 a.title {
-      font-size: $font-size-l3;
+      font-size: $font-size-l3-rem;
     }
     h3 a.title {
-      font-size: $font-size-l4;
+      font-size: $font-size-l4-rem;
     }
     h4 a.title {
-      font-size: $font-size-l5;
+      font-size: $font-size-l5-rem;
     }
     h5 a.title {
-      font-size: $font-size-sm;
+      font-size: $font-size-sm-rem;
     }
   }
 }
 
 // 超小屏幕
 // 不显示文件信息
-@media screen and (max-width: 320px) {
-  div.markdown-header {
-    .document-title,
-    .title-icon {
-      line-height: $header-height;
-    }
-    .document-info {
-      display: none;
-    }
-  }
-}
+// @media screen and (max-width: 320px) {
+//   div.markdown-header {
+//     .document-title,
+//     .title-icon {
+//       line-height: $header-height;
+//     }
+//     .document-info {
+//       display: none;
+//     }
+//   }
+// }
