@@ -1,35 +1,22 @@
 <!-- —————————————↓SCSS———————分界线————————————————————————— -->
 <style lang="scss">
 // 接受托在文件的区域大小
-$drag-width: 360px;
-$drag-height: 270px;
-$border-width: 20px;
 .read-local-file {
-  box-sizing: border-box;
-  width: $drag-width;
-  height: $drag-height;
-  border: $border-width solid black;
-  background: rgba(0, 0, 0, .9);
-  border-radius: 20px;
+  width: 100%;
+  background: rgba(0, 0, 0, .8);
   color: #ccc;
-  margin: auto;
   position: absolute;
   z-index: 1000;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 30px;
   bottom: 0;
   text-align: center;
-  line-height: $drag-height - 2* $border-width;
-
-  a {
-    cursor: pointer;
-  }
-
   .info-wraper {
-    line-height: 1;
-    vertical-align: middle;
-    display: inline-block;
+    width: 100%;
+    display: table;
+    margin: auto 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
     &>* {
       display: inline-block;
     }
@@ -55,8 +42,7 @@ $border-width: 20px;
     position: absolute;
     width: 100%;
     text-align: center;
-    bottom: 1em;
-    left: 0;
+    top: 1em;
     color: red;
   }
   .cancel-import {
@@ -74,14 +60,14 @@ $border-width: 20px;
 
 <!-- —————————————↓HTML————————分界线———————————————————————— -->
 <template lang="pug">
-transition(name="slide2bottom")
+transition(name="fade")
   .read-local-file(v-show="readLocalFileShow")
     .info-wraper
-      h3 拖拽 .md 扩展名文件到此处加载
+      h3(v-if="!isMobile") 拖拽 .md 扩展名文件到此处加载
       label.icon(title="打开一个markdown文件") +
         input(type="file",style="display:none;",ref="fileInput",@change="openFile")
-      .file-type-tip1(v-show="showTip1") 非 .md 扩展名文件自动过滤
-      .file-type-tip2(v-show="showTip2") 请选择正确 .md 文件再打开
+    .file-type-tip1(v-show="showTip1") 非 .md 扩展名文件自动过滤
+    .file-type-tip2(v-show="showTip2") 请选择正确 .md 文件再打开
     a.cancel-import(@click="cancelImport") ×
 </template>
 
@@ -99,6 +85,9 @@ export default {
     }
   },
   computed: {
+    isMobile() {
+      return BUS.isMobile
+    },
     readLocalFileShow() {
       return BUS.readLocalFileShow
     }

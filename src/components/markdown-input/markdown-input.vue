@@ -179,6 +179,7 @@
 <!-- —————————————↓HTML————————分界线———————————————————————— -->
 <template lang="pug">
 #markdown-input
+  read-local-file
   .markdown-option(v-drag="{moveElId:'markdown-input',dragOutX:30,dragOutY:30,cursor:'move'}")
     .option-list
       a(:class="{active:!textareaShow}",@click="toggleFoldTextarea") {{textareaShow?'收起':'展开'}}
@@ -217,8 +218,14 @@
 <!-- ——————————————↓JS—————————分界线———————————————————————— -->
 <script>
 import BUS from '../bus.js'
+import readLocalFile from '../read-local-file/read-local-file.vue'
+
+
 var FileSaver = require('file-saver');
 export default {
+  components: {
+    readLocalFile
+  },
   name: 'markdown-input',
   data() {
     return {
@@ -275,6 +282,8 @@ export default {
     toggleFoldTextarea() {
       // 无编辑文件时，点击此按钮是无效的
       if (!this.editingFile) return
+      // 正在执行导入时，点击此按钮是无效的
+      if (BUS.readLocalFileShow) return
 
       // if(BUS.fileListShow) BUS.fileListShow=false
 
@@ -288,13 +297,23 @@ export default {
     },
     removeLeftAndTop() {
       // 桌面端缩放窗口，style属性中的 top left 值，让@media中css值生效
+
       var winWidth = window.innerWidth
-      if (winWidth <= 500) {
-        this.$el.style = "position:absolute;"
-        // textarea缩放产生style的width和height属性， @media导致css无法生效
-        this.$refs.textarea.style = ""
-      } else if (winWidth <= 800) {
-        this.$el.style = "position:absolute;"
+      if (winWidth <= 800) {
+        var textareaStyle = ''
+        // 调整窗口时, 如果textarea本来就为隐藏状态，保持其隐藏状态
+        if(!this.textareaShow) textareaStyle = 'display:none;'
+        this.$refs.textarea.style = textareaStyle
+
+        this.$el.style = 'position:absolute'
+        // 在大于 800px 的时候，textarea窗口是可以调整
+        // 让css接受width 和 height
+        if (winWidth <= 440) {
+          // textarea缩放产生style的width和height属性， @media导致css无法生效
+          // this.$el.style = 'position:absolute'
+
+          return
+        }
       }
     },
     newMarkdown() {
@@ -349,6 +368,8 @@ export default {
       FileSaver.saveAs(blob, BUS.editingFile.fileName + ".md")
     },
     importFile() {
+      // 可能是收起状态
+      this.textareaShow = true
       BUS.readLocalFileShow = !BUS.readLocalFileShow
     }
   },

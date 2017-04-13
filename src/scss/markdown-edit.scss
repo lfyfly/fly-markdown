@@ -36,6 +36,9 @@
     top: auto;
     left: 10%;
     top: 60%;
+    textarea {
+      resize: none;
+    }
     .fileList {
       height: auto;
       max-height: 210px;
@@ -94,13 +97,13 @@
           font-size: 14px;
         }
       }
+      .dialog-btns {
+        .create,
+        .cancel {
+          font-size: 14px;
+        }
+      }
     }
-  }
-  div.read-local-file {
-    width: auto;
-    margin: 0 20px;
-    bottom: auto;
-    top: 15%;
   }
 }
 

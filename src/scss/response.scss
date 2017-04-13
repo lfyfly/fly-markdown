@@ -50,7 +50,7 @@ $textarea-height: 220px;
 $markdown-option-height: 30px;
 $textarea-height-rem: pxTOrem($textarea-height);
 $markdown-option-height-rem: pxTOrem($markdown-option-height);
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 440px) {
   div.markdown-header {
     margin: 0;
     padding-left: $font-size-l2-rem *2;
