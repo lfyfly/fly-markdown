@@ -2,6 +2,7 @@
 <style lang="scss">
 // 接受托在文件的区域大小
 .read-local-file {
+  overflow: hidden;
   width: 100%;
   background: rgba(0, 0, 0, .8);
   color: #ccc;
@@ -93,6 +94,7 @@ export default {
     }
   },
   methods: {
+
     readFile2Str(file) {
       // 返回promise对象
       return new Promise(function (reslove, reject) {

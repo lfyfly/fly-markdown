@@ -76,6 +76,12 @@
     li {
       position: relative;
       margin: 0;
+      .editActive {
+        color: $active-color;
+        &:hover {
+          color: lighten($active-color, 10%);
+        }
+      }
       &>a {
         display: block;
         border-bottom: 1px dashed #777777;
@@ -107,10 +113,8 @@
         }
         .del-file {
           display: none;
-          font-size: 30px;
-          margin-top: -7px;
-          cursor: pointer;
           color: red;
+          line-height: 30px;
         }
       }
       .revise {
@@ -121,12 +125,9 @@
         }
         .revise-info {
           display: none;
-          width: 30px;
-          height: 30px;
-          background-image: url('./revise.png');
-          background-size: 20px 20px;
-          background-position: center center;
-          background-repeat: no-repeat;
+          color: #ccc;
+          line-height: 30px;
+          margin-top: 2px;
         }
       }
 
@@ -161,7 +162,8 @@
             right: 0;
             background: green;
             color: white;
-            line-height: 18px;
+            line-height: 19px;
+
             &:hover {
               background: #029802;
             }
@@ -170,6 +172,12 @@
             color: white;
           }
         }
+      }
+    }
+    li.showIcon {
+      .del-file,
+      .revise-info {
+        display: block;
       }
     }
   }
@@ -204,15 +212,15 @@
 
   transition(name="fileListSlide")
     ul.fileList(v-show="fileListShow")
-      li(v-for="v in fileList",@click="readFile")
-        a {{v}}
+      li(:class="{showIcon: isMobile}",v-for="v in fileList",@click="readFile")
+        a(:class="{editActive: editingFile&&editingFile.fileName===v}") {{v}}
         span.del
-          span.del-file(@click.stop="del") ×
+          a.iconfont.icon-shanchu.del-file(@click.stop="del")
         .sure-del(style="display:none;",@click.stop="")
           a.sure(title="确认删除",@click.stop="sureDel") ×
           a.cancel(title="取消删除",@click.stop="cancelDel") >
         span.revise(@click.stop="reviseInfo")
-          span.revise-info
+           a.iconfont.icon-weibiaoti--.revise-info
 </template>
 
 <!-- ——————————————↓JS—————————分界线———————————————————————— -->
@@ -230,11 +238,15 @@ export default {
   data() {
     return {
       msg: 'this is from markdown-input.vue',
-      textareaShow: true,
     }
   },
   computed: {
-
+    isMobile() {
+      return BUS.isMobile
+    },
+    textareaShow() {
+      return BUS.textareaShow
+    },
     editingFile() {
       return BUS.editingFile
     },
@@ -281,15 +293,17 @@ export default {
     },
     toggleFoldTextarea() {
       // 无编辑文件时，点击此按钮是无效的
+      console.log('this.editingFile', this.editingFile)
       if (!this.editingFile) return
-      // 正在执行导入时，点击此按钮是无效的
-      if (BUS.readLocalFileShow) return
 
+      // 正在执行导入时，点击此按钮是无效的
+      // if (BUS.readLocalFileShow) return
+      BUS.readLocalFileShow = false
       // if(BUS.fileListShow) BUS.fileListShow=false
 
-      this.textareaShow = !this.textareaShow
+      BUS.textareaShow = !BUS.textareaShow
       // 折叠事件,并且传递出折叠状态（需要响应）
-      this.$emit('flod', this.textareaShow)
+      this.$emit('flod', BUS.textareaShow)
     },
     // 组件的双向绑定
     input2markdownData(event) {
@@ -302,7 +316,7 @@ export default {
       if (winWidth <= 800) {
         var textareaStyle = ''
         // 调整窗口时, 如果textarea本来就为隐藏状态，保持其隐藏状态
-        if(!this.textareaShow) textareaStyle = 'display:none;'
+        if (!BUS.textareaShow) textareaStyle = 'display:none;'
         this.$refs.textarea.style = textareaStyle
 
         this.$el.style = 'position:absolute'
@@ -369,12 +383,11 @@ export default {
     },
     importFile() {
       // 可能是收起状态
-      this.textareaShow = true
+      BUS.textareaShow = true
       BUS.readLocalFileShow = !BUS.readLocalFileShow
     }
   },
   mounted() {
-    // this.intervalSave(30) // 单位秒
     window.addEventListener('resize', this.removeLeftAndTop)
   },
   watch: {

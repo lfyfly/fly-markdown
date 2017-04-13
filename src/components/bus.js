@@ -7,6 +7,9 @@ export default new Vue({
     // 目录的显示状态
     catalogShow: false,
 
+    // textarea 是否被折叠
+    textareaShow: true,
+
     // 创建文件界面是否显示
     createShow: false,
     // 修改文件名
@@ -63,8 +66,11 @@ export default new Vue({
       // 刷新文件列表
       this.getFileList()
       // 如果当前文件为删除文件
-      this.editingFile = null
-      this.markdownData = ''
+      if (fileName === this.editingFile.fileName) {
+        this.textareaShow = true
+        this.editingFile = null
+        this.markdownData = ''
+      }
     },
     getFileInfo(fileName) {
       var infoStr = localStorage[fileName]

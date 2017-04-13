@@ -52,6 +52,12 @@
       height: 2em;
       width: 220px;
     }
+    .addlink {
+      position: relative;
+      left: - $font-size-base*1.4;
+      top: 1px;
+      display: inline-block;
+    }
     input.value {
       border-radius: 4px;
       border: 1px solid #ccc;
@@ -60,7 +66,7 @@
     .fileName-tip {
       color: red;
       font-size: 12px;
-      margin-left: 1em;
+      margin-left: -.5em;
       margin-top: 5px;
       position: absolute;
     }
@@ -109,16 +115,19 @@ transition(name="slide2bottom")
       .dialog-content
         label.filename
           span.key 文件名
-          input.value(v-model="fileName")
+          input.value(spellcheck="off", v-model="fileName")
+          a(@click.stop="").addlink.iconfont.icon-iconfontlink
           span.fileName-tip(v-show="!fileName") 必填
           //- 修改时不显示重名提示
           span.fileName-tip(v-show="(fileName&&hadSameFile) && (!(reviseingInfo&&reviseingInfo.oldFileName === fileName))") 重名
         .label
-          input.key(v-model="fileInfo[0].key")
-          input.value(v-model="fileInfo[0].value")
+          input.key(spellcheck="off", v-model="fileInfo[0].key")
+          input.value(spellcheck="off", v-model="fileInfo[0].value")
+          a.addlink.iconfont.icon-iconfontlink
         .label
-          input.key(v-model="fileInfo[1].key")
-          input.value(v-model="fileInfo[1].value")
+          input.key(spellcheck="off", v-model="fileInfo[1].key")
+          input.value(spellcheck="off", v-model="fileInfo[1].value")
+          a.addlink.iconfont.icon-iconfontlink
 
         .tip 第二个第三个key值可以自定义
       .dialog-btns
@@ -292,6 +301,10 @@ export default {
 
   },
   watch: {
+    reviseShow(v) {
+      // 每次修改信息界面退出,重置表单数据
+      if (!v) this.resetInfoValue()
+    },
     reviseingInfo: function (v) {
       if (v && !v.revised) {
         this.reviseInit()
