@@ -32,12 +32,37 @@ export default new Vue({
     // 处理拖拽多文件名冲突组件
     renameShow: false,
     renameFileList: [],
-    LoadFileList: []
+    LoadFileList: [],
+
+    // 保存所有此类型（ 显示tip，一段时间后消失）的定时器
+    tipTimer: {},
+    tipShows: {},
+    tipShow: { content: '', state: 'false', style: '', timer: null }
   },
   computed: {
 
   },
   methods: {
+    // 显示tip，一段时间后消失
+    // 未完成，将所有组件的tip进行集中管理
+    showTipFn({ content, timeOut = 2000, style, condition = 'withoutCondition' }) {
+      console.log(content, timeOut, style, condition)
+      if (!condition) return
+
+      this.tipShow.content = content
+      this.tipShow.style = style
+      this.tipShow.state = true
+
+      if (this.tipShow.timer) clearTimeout(this.tipShow.timer)
+
+      this.tipShow.state = true
+
+      this.tipShow.timer = setTimeout(() => {
+        this.tipShow.state = false
+      }, timeOut)
+      return true
+    },
+
     // ———————————————————————————初始化函数—————————————————————————————————————
     init() {
       this.initIsMobile()
@@ -49,16 +74,6 @@ export default new Vue({
     // ———————————————————————————初始化函数结束——————————————————————————————————
 
 
-    // 修改localStorage信息
-    reviseInfo(fileName) {
-      // 弹出
-
-      // 用户填写表单，通过后修改 reviseingInfo.revised = true
-      //
-      // 增加新的文件信息
-
-      // 清除原有文件信息
-    },
     removeFileData(fileName) {
       alert(fileName)
       localStorage.removeItem(fileName)
@@ -98,7 +113,6 @@ export default new Vue({
     hadSameFile(fileName) {
       if (fileName) {
         // 存在相同文件名
-        console.log(this.fileList)
         if (this.fileList.length != 0 && this.fileList.indexOf(fileName) != -1) return true
       }
     },
@@ -173,7 +187,6 @@ export default new Vue({
         return
       }
 
-      alert('hehda')
 
       // 信息修改过了
       // 保存新的信息

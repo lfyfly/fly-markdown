@@ -5,10 +5,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
   <script>
-    document.documentElement.style.fontSize = window.innerWidth / 3.75 + 'px';
+    var winWdith = window.innerWidth
+    if (winWdith < 320) winWdith = 320
+    document.documentElement.style.fontSize = winWdith / 3.75 + 'px';
     window.addEventListener('resize', function () {
       console.log('resize')
-      if(window.innerWidth<320 && window.innerWidth>440) return
+      if (window.innerWidth < 320) return
       document.documentElement.style.fontSize = window.innerWidth / 3.75 + 'px';
     })
   </script>

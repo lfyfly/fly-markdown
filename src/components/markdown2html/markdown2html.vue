@@ -19,6 +19,7 @@
     left: $separation;
     width: $catolog-width;
     height: 100%;
+    padding: 1em 0;
     overflow: auto;
     box-sizing: border-box; // border: 1px solid;
     border-top: $separation / 2 solid $main-color;
@@ -32,6 +33,7 @@
     margin-left: $catolog-width+$separation * 2;
   }
   .markdown-html {
+    position: relative;
     margin-left: $catolog-width+$separation * 3.5;
     margin-right: $separation; // border: $separation / 2 solid;
     border-top: $separation / 2 solid $main-color;
@@ -97,7 +99,9 @@ export default {
     }
   },
   methods: {
-
+    trim(str) {
+      return str.replace(/^\s|\s$/g, '')
+    },
     // 当屏幕宽度大于800时 有media 来控制目录显示
     removeCatalogDisplay() {
       var winWidth = window.innerWidth
@@ -135,6 +139,10 @@ export default {
 
           case 'h' + (rootTitleIndex + 2):
             var level1 = this.catalogArr[this.catalogArr.length - 1]
+
+            // 错误消息
+            if (BUS.showTipFn({ content: '目录不要跨级别使用', timeout: 5000, style: 'warn', condition: !level1.children })) return
+
             var level2 = level1.children[level1.children.length - 1]
             if (!level2.children) this.$set(level2, 'children', [])
             level2.children.push({ title: v.textContent, level: 3 })
@@ -145,7 +153,7 @@ export default {
     childrenForEach() {
       // 进行重置，在setTitle() 里进行添加
       this.titleElsArr = []
-
+      console.log(children)
       var children = this.$refs.markdownContent.children
       for (var i = 0; i < children.length; i++) {
         this.setTitle(children[i], i, children)
@@ -156,7 +164,7 @@ export default {
       if (v.tagName.toLowerCase().match(/^h\d*$/)) {
         this.titleElsArr.push(v)
 
-        var hmtlText = v.textContent
+        var hmtlText = this.trim(v.textContent)
         v.innerHTML = `<a class="title" href="#${hmtlText}" id="${hmtlText}">${v.innerHTML}</a>`
       }
     },
@@ -178,14 +186,16 @@ export default {
   },
   watch: {
     markdownData: function () {
+
       this.$refs.markdownContent.innerHTML = marked(this.markdownData)
 
       this.$nextTick(() => {
         this.childrenForEach()
         this.getCatalogArr()
         var codeEls = document.querySelectorAll('code')
+        console.log(codeEls)
         for (var i = 0; i < codeEls.length; i++) {
-          hljs.highlightBlock(codeEls[i]);
+          hljs.highlightBlock(codeEls[i])
         }
 
       })

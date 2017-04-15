@@ -53,7 +53,7 @@ $html-font-size: 100px;
   @return $px / $html-font-size * 1rem
 }
 
-$phone-rate: .8; // 移动端尺寸相对于桌面端 比例
+$phone-rate: .85; // 移动端尺寸相对于桌面端 比例
 $font-size-base-rem: pxTOrem($font-size-base * $phone-rate);
 $font-size-sm-rem: $font-size-base-rem / $font-rate;
 $font-size-xs-rem: $font-size-sm-rem / $font-rate;

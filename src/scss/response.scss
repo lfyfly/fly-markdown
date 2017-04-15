@@ -9,6 +9,15 @@
     a.catalog-btn {
       display: block;
     }
+    div.document-info {
+      // 取消绝对定位，文件信息位置变成在标题下面
+      line-height: 1em;
+      .info-key,
+      .info-value a {
+        font-size: 14px;
+      }
+      bottom: 1px;
+    }
   }
   div.markdown2html {
     bottom: 0;
@@ -22,6 +31,17 @@
     .slide-leave-active {
       transform: translateX( - $catolog-width)
     }
+
+    // ---导出html 所用css 开始----
+    div.markdown2html .catalog-hide {
+      transform: translateX(-220px)
+    }
+    div.markdown2html .catalog-show {
+      transform: translateX(0px)
+    }
+    // ---导出html 所用css 结束----
+
+
     // markdown-catalog 与 markdown-html 分隔线
     .med-line {
       display: none;
@@ -51,6 +71,7 @@ $markdown-option-height: 30px;
 $textarea-height-rem: pxTOrem($textarea-height);
 $markdown-option-height-rem: pxTOrem($markdown-option-height);
 @media screen and (max-width: 440px) {
+
   div.markdown-header {
     margin: 0;
     padding-left: $font-size-l2-rem *2;
@@ -89,6 +110,9 @@ $markdown-option-height-rem: pxTOrem($markdown-option-height);
     }
     .markdown-catalog {
       border: none;
+      li a{
+        padding: 0 1em;
+      }
     }
     // 屏幕小于500px的时候标题字体减小
     // 因为markdown-catalog 隐藏
@@ -112,17 +136,3 @@ $markdown-option-height-rem: pxTOrem($markdown-option-height);
     }
   }
 }
-
-// 超小屏幕
-// 不显示文件信息
-// @media screen and (max-width: 320px) {
-//   div.markdown-header {
-//     .document-title,
-//     .title-icon {
-//       line-height: $header-height;
-//     }
-//     .document-info {
-//       display: none;
-//     }
-//   }
-// }

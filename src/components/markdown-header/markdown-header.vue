@@ -8,12 +8,19 @@
   border-top: $separation /2 solid $main-color;
   margin: 0 $separation;
   position: relative;
-
   .catalog-btn {
+    display: inline-block;
     position: absolute;
+    top: .9em;
     left: .4em;
-    line-height: $header-height;
     font-size: $font-size-l3;
+    background: $main-color;
+    width: 1em;
+    height: .2em;
+    padding: .2em 0;
+    background-clip: content-box;
+    border-top: .2em solid $main-color;
+    border-bottom: .2em solid $main-color;
     display: none; // 屏幕宽度大于800px默认隐藏
   }
 
@@ -28,7 +35,7 @@
   }
 
   .document-info {
-    min-width: 300px;
+    // min-width: 300px;
     text-align: right;
     position: absolute;
     right: 0;
@@ -48,7 +55,7 @@
 <!-- —————————————↓HTML————————分界线———————————————————————— -->
 <template lang="pug">
 .markdown-header
-  a.catalog-btn.iconfont.icon-mulu(@click="toggleCatalog")
+  a.catalog-btn(@click="toggleCatalog")
   .document-header
     h1.document-title {{editingFile?editingFile.fileName: 'fly-markdown'}}
     a.title-icon.iconfont.icon-github
@@ -56,9 +63,7 @@
     //- 还未开始编辑显示初始值，如果没有填入信息就不写入info
     .info(v-if="editingFile===null||editingFile!==null&&editingFile.info.length!=0",v-for="v in fileInfo")
       span().info-key {{v.key+': '}}
-      span().info-value: a {{v.value}}
-
-
+      span().info-value: a(:href="v.link?v.link.indexOf('http://')===-1?'http://'+v.link:v.link:'javescript:void(0);'", :target="v.link?'_blank':''") {{v.value}}
 
 </template>
 

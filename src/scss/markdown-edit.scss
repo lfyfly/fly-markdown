@@ -39,9 +39,17 @@
     textarea {
       resize: none;
     }
+    .markdown-option {
+      .icon-shouqi1,
+      .icon-zhankai1 {
+        transform-origin: center center;
+        transform: rotate(-90deg);
+        margin-top: 0;
+      }
+    }
     .fileList {
       height: auto;
-      max-height: 210px;
+      max-height: 180px;
       left: auto;
       right: 0;
       bottom: 100%;
@@ -70,6 +78,12 @@
     .edit-tip {
       font-size: 14px;
     }
+    .fileList {
+      width: 180px;
+      .fileList-fileName {
+        padding: 0 1.5em;
+      }
+    }
   }
   div.new-markdown {
     .dialog {
@@ -81,8 +95,7 @@
         margin-bottom: $font-size-xs-rem;
       }
       .dialog-content {
-        label,
-        div.label {
+        div.input {
           text-align: center;
           margin: 0;
         }
@@ -95,6 +108,12 @@
         }
         input {
           font-size: 14px;
+        }
+        div.addlink {
+          font-size: $font-size-sm;
+          a.icon-iconfontlink {
+            font-size: $font-size-sm;
+          }
         }
       }
       .dialog-btns {

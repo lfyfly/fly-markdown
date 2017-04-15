@@ -11,9 +11,9 @@
 <script>
 import BUS from './components/bus.js'
 
-import markdownInput from './components/markdown-input/markdown-input.vue'
 import markdown2html from './components/markdown2html/markdown2html.vue'
 import markdownHeader from './components/markdown-header/markdown-header.vue'
+import markdownInput from './components/markdown-input/markdown-input.vue'
 import newMarkdown from './components/new-markdown/new-markdown.vue'
 import rename from './components/rename/rename.vue'
 

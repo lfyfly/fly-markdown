@@ -38,8 +38,7 @@
       display: none;
     }
   }
-  .file-type-tip1,
-  .file-type-tip2 {
+  .file-type-tip {
     position: absolute;
     width: 100%;
     text-align: center;
@@ -67,8 +66,8 @@ transition(name="fade")
       h3(v-if="!isMobile") 拖拽 .md 扩展名文件到此处加载
       label.icon(title="打开一个markdown文件") +
         input(type="file",style="display:none;",ref="fileInput",@change="openFile")
-    .file-type-tip1(v-show="showTip1") 非 .md 扩展名文件自动过滤
-    .file-type-tip2(v-show="showTip2") 请选择正确 .md 文件再打开
+    .file-type-tip(v-show="tipShow") 请选择正确 .md 文件再打开
+    //- .file-type-tip1(v-show="tipShow") 非 .md 扩展名文件自动过滤
     a.cancel-import(@click="cancelImport") ×
 </template>
 
@@ -81,8 +80,9 @@ export default {
   data() {
     return {
       msg: 'this is from read-local-file.vue',
-      showTip1: false,
-      showTip2: false
+      tipShow: false,
+      // 记录都是其，用来清除
+      timer: null
     }
   },
   computed: {
@@ -94,7 +94,13 @@ export default {
     }
   },
   methods: {
-
+    showTipFn() {
+      if (this.timer) clearTimeout(this.timer)
+      this.tipShow = true
+      this.timer = setTimeout(() => {
+        this.tipShow = false
+      }, 5000)
+    },
     readFile2Str(file) {
       // 返回promise对象
       return new Promise(function (reslove, reject) {
@@ -109,27 +115,33 @@ export default {
           var fileData = fileContent
           var fileInfoRes = fileContent.match(/^\-\-\-([\w\W]*)\-\-\-/)
           if (fileInfoRes) {
-            var fileInfoStr = fileInfoRes[1]
+            var fileInfoStr = fileInfoRes[0]
             fileData = fileContent.replace(fileInfoStr, '')
           }
 
           if (fileInfoStr) {
+
             var keyPattern = /\*\*(.+)\*\*/g
             var keyPattern1 = /\*\*(.+)\*\*/
             var keys = fileInfoStr.match(keyPattern)
+
             var keysArr = keys.map((key) => {
               return key.match(keyPattern1)[1]
             })
 
             var valuePattern = /\:\s(.+)\n\n/g
-            var valuePattern1 = /\:\s(.+)\n\n/
+            var valuePattern1 = /\:\s\[(.+)\]\((.+)\)\n\n/
             var values = fileInfoStr.match(valuePattern)
+            alert(values)
+
             var valuesArr = values.map((value) => {
-              return value.match(valuePattern1)[1]
+              var match = value.match(valuePattern1)
+              return { value: match[1], link: match[2] ? match[2] : '' }
             })
             // 在这呢
-            fileInfo = keysArr.map((key, i) => {
-              return { key, value: valuesArr[i] }
+            fileInfo = valuesArr.map((info, i) => {
+              info.key = keysArr[i]
+              return info
             })
           }
 
@@ -151,6 +163,9 @@ export default {
     // 文件过滤
     //
     dragFn(event) {
+      if (event.type == "drogover") {
+        return
+      }
       event.preventDefault()
 
       var hasReapetFile = false
@@ -160,12 +175,12 @@ export default {
       var tasks = []
       var repeatFilesTasks = []
       if (event.type == "drop") {
-        var files = event.dataTransfer.files;
+        var files = event.dataTransfer.files
+        console.log(files.length, 'files.length')
         for (var i = 0; i < files.length; i++) {
           // md文件过滤，显示提示
           if (!this.isMarkdownFile(files[i].name)) {
-            this.showTip1 = true
-            this.showTip2 = false
+            this.showTipFn()
             continue
           }
           // 返回重名的文件对象
@@ -191,11 +206,7 @@ export default {
         // 拖拽文件中没有md文件
 
         if (tasks.length === 0) {
-          // 重复文件不触发 非md 文件提示
-          if (!hasReapetFile) {
-            this.showTip1 = false
-            this.showTip2 = true
-          }
+
           return
         }
         Promise.all(tasks).then((reslove) => {
@@ -213,13 +224,10 @@ export default {
       if (!file) return
       // 不是md文件
       if (!this.isMarkdownFile(file.name)) {
-        this.showTip1 = false
-        this.showTip2 = true
+        this.showTipFn()
         return
       }
-      // 清除所有tip显示
-      this.showTip1 = false
-      this.showTip2 = false
+
 
 
       // 读取数据
@@ -259,6 +267,6 @@ export default {
     this.$el.addEventListener("dragenter", this.dragFn)
     this.$el.addEventListener("dragover", this.dragFn)
     this.$el.addEventListener("drop", this.dragFn);
-  }
+  },
 }
 </script>

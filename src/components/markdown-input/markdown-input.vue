@@ -7,6 +7,21 @@
   z-index: 998; // 窗口大于800px时 #markdown-input 定位
   top: 50%;
   left: 30%;
+  .tip {
+    text-align: center;
+    font-size: 14px;
+
+    position: absolute;
+    top: -1.6em;
+    width: 100%;
+
+    &.warn {
+      color: red;
+    }
+    &.correct {
+      color: $active-color;
+    }
+  }
   a {
     cursor: pointer;
   }
@@ -25,6 +40,7 @@
     box-sizing: border-box;
     background: $main-color;
     height: 30px;
+    overflow: hidden;
     line-height: 30px; // 操作栏文字激活为：绿色
     .active {
       color: $active-color;
@@ -33,10 +49,38 @@
   .option-list {
     float: right;
   }
+  .iconfont {
+    display: inline-block;
+    width: 30px;
+    text-align: center;
+    margin-top: 1px;
+    font-size: 18px;
+    &.icon-shouqi1,
+    &.icon-zhankai1 {
+      margin-top: 2px;
+    }
+    &.icon-iconfontxinjian {
+      margin-top: 0px;
+    }
+    &.icon-daoru-copy,
+    &.icon-save {
+      font-size: 19px;
+      margin-top: 2px;
+    }
+    &.icon-daochubeifen,
+    {
+      font-size: 20px;
+      margin-top: 2px;
+    }
+    &.icon-web_shouhu,
+    &.icon-web_xiangxiazhankai {
+      font-weight: bold;
+    }
+  }
   .option-list>* {
     float: left;
     color: $font-color-main;
-    margin-right: 12px;
+    margin-right: 4px;
   }
   .cover {
     width: 100%;
@@ -62,7 +106,7 @@
     margin: 0;
     height: 100%;
     min-height: 90px;
-    width: 160px;
+    width: 180px;
     background: $main-color;
     overflow: auto;
     z-index: -1;
@@ -190,20 +234,21 @@
   read-local-file
   .markdown-option(v-drag="{moveElId:'markdown-input',dragOutX:30,dragOutY:30,cursor:'move'}")
     .option-list
-      a(:class="{active:!textareaShow}",@click="toggleFoldTextarea") {{textareaShow?'收起':'展开'}}
-      //- a(@click="save") 保存
-      a(@click="importFile") 导入
-      a(@click="exportFile") 导出
-      a(@click="newMarkdown",:class="{active:!editingFile}") 新建文件
-      a(@click="toggleFileListShow",:class="{active:fileListShow}") 文件列表
+      a.iconfont(:title="textareaShow?'收起编辑区':'展开编辑区'", :class="{active:!textareaShow,'icon-web_shouhui':textareaShow,'icon-web_xiangxiazhankai':!textareaShow}",@click="toggleFoldTextarea")
+      //- a.iconfont.icon-dakai1(@click="")
+      a.iconfont.icon-daoru-copy(title="导入本地文件", @click="importFile")
+      a.iconfont.icon-daochubeifen(title="导出文件到本地", @click="exportFile")
+      a.iconfont.icon-save(title="保存",@click="save")
+      a.iconfont.icon-iconfontxinjian(title="新建", @click="newMarkdown", :class="{active:!editingFile}")
+      a.iconfont(:title="fileListShow?'收起目录':'展开目录'", @click="toggleFileListShow", :class="{active:fileListShow,'icon-shouqi1':fileListShow,'icon-zhankai1':!fileListShow}")
   textarea(spellcheck="false",
           ref="textarea",
           v-show="textareaShow",
           @keydown.tab.prevent="",
           @keydown.enter="save",
           @input="input2markdownData",
-
           )
+  .tip(v-show="tipShowState",:class="[tipShowStyle]",v-text="tipShowContent")
   .cover(v-if="!editingFile")
   pre.edit-tip(v-if="!editingFile").
     请先创建文件
@@ -213,7 +258,7 @@
   transition(name="fileListSlide")
     ul.fileList(v-show="fileListShow")
       li(:class="{showIcon: isMobile}",v-for="v in fileList",@click="readFile")
-        a(:class="{editActive: editingFile&&editingFile.fileName===v}") {{v}}
+        a.fileList-fileName(:class="{editActive: editingFile&&editingFile.fileName===v}") {{v}}
         span.del
           a.iconfont.icon-shanchu.del-file(@click.stop="del")
         .sure-del(style="display:none;",@click.stop="")
@@ -258,9 +303,26 @@ export default {
     },
     fileListShow() {
       return BUS.fileListShow
-    }
+    },
+
+    tipShowState() {
+      return BUS.tipShow.state
+    },
+    tipShowStyle() {
+      return BUS.tipShow.style
+    },
+    tipShowContent() {
+      return BUS.tipShow.content
+    },
   },
   methods: {
+    nofileEditingTipFn() {
+      return BUS.showTipFn({
+        content: '当前没有文件正在编辑',
+        style: 'warn',
+        condition: !BUS.editingFile,
+      })
+    },
     reviseInfo(e) {
       var fileName = e.target.parentNode.parentNode.children[0].textContent
       var fileInfo = BUS.getFileInfo(fileName)
@@ -274,10 +336,10 @@ export default {
       console.log(parentEl.previousSibling.previousSibling)
       var fileName = parentEl.previousSibling.previousSibling.textContent
       alert(e.target.title)
+      parentEl.style.display = 'none'
       if (e.target.title === '确认删除') {
         BUS.removeFileData(fileName)
       }
-      parentEl.style.display = 'none'
     },
     cancelDel(e) {
       var parentEl = e.target.parentNode
@@ -294,7 +356,10 @@ export default {
     toggleFoldTextarea() {
       // 无编辑文件时，点击此按钮是无效的
       console.log('this.editingFile', this.editingFile)
-      if (!this.editingFile) return
+
+      // 返回值为true时，就是说嘛显示tip，
+      if (this.nofileEditingTipFn()) return
+
 
       // 正在执行导入时，点击此按钮是无效的
       // if (BUS.readLocalFileShow) return
@@ -342,8 +407,20 @@ export default {
 
       // 更新编译
     },
-    save() {
+    save(e) {
+
+      if (this.nofileEditingTipFn()) return
+
       BUS.save()
+
+      if (e.type !== 'keydown') {
+        BUS.showTipFn({
+          content: '文件保存成功',
+          style: 'correct',
+          condition: BUS.editingFile,
+        })
+      }
+
     },
     // 定时保存second
     intervalSave(second) {
@@ -354,23 +431,34 @@ export default {
     },
     exportFile() {
       // 获取innerHTML
-      var catalogHTMLStr = document.querySelector('.markdown-catalog').innerHTML
-      var contenthtmlStr = document.querySelector('.markdown-html').innerHTML
-      console.log('catalog', catalogHTMLStr)
-      console.log('content', contenthtmlStr)
+      var headerHTMLStr = document.querySelector('.markdown-header').outerHTML
+      // var catalogHTMLStr = document.querySelector('.markdown-catalog').outerHTML
+      var contenthtmlStr = document.querySelector('.markdown2html').outerHTML
+      // 重写 目录动画需要
+      contenthtmlStr = contenthtmlStr.replace('class=\"markdown-catalog\"', 'class=\"markdown-catalog catalog-hide\"')
+
+      console.log(headerHTMLStr + '\n' + contenthtmlStr)
+
+
 
       return
       BUS.save()
+      if (this.nofileEditingTipFn()) return
 
-      if (!BUS.editingFile) {
-        alert("当前没有文件正在编辑")
-        return
-      }
       var infoWrite2File = ''
       console.log(BUS.editingFile)
       if (BUS.editingFile.info.length > 0) {
         BUS.editingFile.info.forEach((v) => {
-          infoWrite2File += '> **' + v.key + '**: ' + v.value + '\n\n'
+          var value = v.value
+          if (v.link) {
+            var link = v.link
+            if (v.link.indexOf('http://') === -1) {
+              link = 'http://' + v.link
+            }
+            value = `[${value}](${link})`
+          }
+
+          infoWrite2File += '> **' + v.key + '**: ' + value + '\n\n'
         })
 
       }

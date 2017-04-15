@@ -33,10 +33,10 @@
   .dialog-content {
     margin-bottom: 3.5em;
 
-    label,
-    .label {
+    .input {
       display: block;
       margin: 1em 0;
+      position: relative;
     }
     .key {
       display: inline-block;
@@ -53,20 +53,45 @@
       width: 220px;
     }
     .addlink {
-      position: relative;
-      left: - $font-size-base*1.4;
-      top: 1px;
+      position: absolute;
+      bottom: 0;
+      width: 30px;
+      height: 2em;
       display: inline-block;
+      margin-left: -30px;
+      text-align: center;
+      .icon-iconfontlink {
+        display: inline-block;
+        margin-top: .2em;
+        position: relative;
+        color: #ccc;
+        z-index: 2;
+      }
+      .link {
+        height: 100%;
+        border: 1px solid black;
+        width: 220px;
+        background: rgba(0, 0, 0, .7);
+        color: #ccc;
+        font-size: 14px;
+        padding-left: .6em;
+        box-sizing: border-box;
+        position: absolute;
+        left: -630%;
+        right: 0;
+        border-radius: 4px;
+      }
     }
     input.value {
       border-radius: 4px;
       border: 1px solid #ccc;
-      padding-left: .6em;
+      padding-left: 10px;
+      box-sizing: border-box;
     }
     .fileName-tip {
       color: red;
       font-size: 12px;
-      margin-left: -.5em;
+      margin-left: .5em;
       margin-top: 5px;
       position: absolute;
     }
@@ -113,21 +138,18 @@ transition(name="slide2bottom")
       .dialog-title
         h4 {{typeObject[type].dialogTile}}
       .dialog-content
-        label.filename
-          span.key 文件名
-          input.value(spellcheck="off", v-model="fileName")
-          a(@click.stop="").addlink.iconfont.icon-iconfontlink
-          span.fileName-tip(v-show="!fileName") 必填
-          //- 修改时不显示重名提示
-          span.fileName-tip(v-show="(fileName&&hadSameFile) && (!(reviseingInfo&&reviseingInfo.oldFileName === fileName))") 重名
-        .label
-          input.key(spellcheck="off", v-model="fileInfo[0].key")
-          input.value(spellcheck="off", v-model="fileInfo[0].value")
-          a.addlink.iconfont.icon-iconfontlink
-        .label
-          input.key(spellcheck="off", v-model="fileInfo[1].key")
-          input.value(spellcheck="off", v-model="fileInfo[1].value")
-          a.addlink.iconfont.icon-iconfontlink
+        .input(v-for="(v,i) in fileInfoArr")
+          span.key(v-if="i===0") {{v.key}}
+          input.key(v-else="",spellcheck="false", v-model="v.key")
+          input.value(spellcheck="false", v-model="v.value")
+          div.addlink(v-if="i!=0")
+            transition(name="fade")
+              input.link(spellcheck="false", type="url",v-show="linkInputShow[i]",v-model="v.link",@click.stop="",placeholder="请输入绑定链接")
+            a(@click="addLink(i)").iconfont.icon-iconfontlink
+          //- 只有文件名才有验证
+          span.fileName-tip(v-if="i===0 && !v.value") 必填
+          span.fileName-tip(v-show="i===0 &&(v.value && hadSameFile) && (!(reviseingInfo && reviseingInfo.oldFileName === v.value))") 重名
+
 
         .tip 第二个第三个key值可以自定义
       .dialog-btns
@@ -146,7 +168,8 @@ export default {
   data() {
     return {
       msg: 'this is from new-markdown.vue',
-
+      // 输入链接的input显示状态
+      linkInputShow: [false, false, false],
       typeObject: {
         // 创建文件
         create: {
@@ -163,11 +186,12 @@ export default {
         }
 
       },
-      fileName: '',
-      fileInfo: [
-        { key: '作者', value: '' },
-        { key: '联系方式', value: '' }
+      fileInfoArr: [
+        { key: '文件名', value: '', link: '' },
+        { key: '作者', value: '', link: '' },
+        { key: '联系方式', value: '', link: '' }
       ],
+      // 验证成功后的信息
       createInfo: null
     }
   },
@@ -180,6 +204,7 @@ export default {
   },
   computed: {
     reviseingInfo() {
+      console.log('BUS.reviseingInfo', BUS.reviseingInfo)
       return BUS.reviseingInfo
     },
 
@@ -190,28 +215,31 @@ export default {
       return BUS.reviseShow
     },
     hadSameFile() {
-      return BUS.hadSameFile(this.fileName)
+      return BUS.hadSameFile(this.fileInfoArr[0].value)
     },
     passValidation() {
       // 验证通过
-      return this.fileName && !this.hadSameFile
+      return this.fileInfoArr[0].value && !this.hadSameFile
     },
 
   },
   methods: {
+    addLink(i) {
+      this.$set(this.linkInputShow, i, !this.linkInputShow[i])
+
+    },
     // 初始值
     reviseInit() {
 
       if (!this.reviseingInfo) return
 
-      console.log(this.reviseingInfo)
-
-      this.fileName = this.reviseingInfo.fileName
+      this.fileInfoArr[0].value = this.reviseingInfo.fileName
       if (this.reviseingInfo.info.length === 0) return
-      if (this.reviseingInfo.info.length === 1) {
-        this.fileInfo[0] = this.reviseingInfo.info[0]
-      } else { // reviseingInfo.info.length ===2
-        this.fileInfo = this.reviseingInfo.info
+      if (this.reviseingInfo.info.length <= 2) {
+        this.fileInfoArr[1] = this.reviseingInfo.info[0]
+      }
+      if (this.reviseingInfo.info.length === 2) { // reviseingInfo.info.length ===2
+        this.fileInfoArr[2] = this.reviseingInfo.info[1]
       }
     },
 
@@ -223,11 +251,6 @@ export default {
     },
 
     revise() {
-      if (!this.fileName) {
-        alert('文件名不能为空')
-        return
-      }
-
 
       BUS.save()
 
@@ -246,46 +269,59 @@ export default {
 
     // 创建完毕后，清理数据值,保留修改的键值
     resetInfoValue() {
-      this.fileName = ''
-      this.fileInfo[0].value = ''
-      this.fileInfo[1].value = ''
+      this.fileInfoArr.forEach((v) => {
+        v.value = ''
+        v.link = ''
+      })
     },
     getCreateInfo() {
-      //  确保顺序与表单顺序吻合
-      if (this.passValidation || this.type === 'revise') {
-        var obj = {
-          fileName: this.fileName,
-          info: []
-        }
-        if (this.fileInfo[0].key && this.fileInfo[0].value) obj.info.push({ key: this.fileInfo[0].key, value: this.fileInfo[0].value })
-        if (this.fileInfo[1].key && this.fileInfo[1].value) obj.info.push({ key: this.fileInfo[1].key, value: this.fileInfo[1].value })
-        console.log(obj, 'onj')
-        this.createInfo = obj
-      }
-    },
-    create() {
-      if (!this.fileName) {
+      // 文件名为空弹窗警告
+      if (!this.fileInfoArr[0].value) {
         alert('文件名不能为空')
         return
       }
+
+      //  确保文件信息顺序与表单顺序吻合
+      // 通过验证 || 组件作为修改信息时
+      if (this.passValidation || this.type === 'revise') {
+        var obj = {
+          fileName: this.fileInfoArr[0].value,
+          info: []
+        }
+        this.fileInfoArr.forEach((v, i) => {
+          if (i >= 1) {
+            console.log(v.value)
+            // 深拷贝，否则因为在this.resetInfoValue()中清除的value值会影响到BUS.editingFile
+            //BUS.editingFile = this.createInfo
+
+            if (v.key && v.value) obj.info.push({ key: v.key, value: v.value, link: v.link })
+          }
+        })
+        // createInfo 已经符合要求的创建信息
+        this.createInfo = obj
+        console.log(this.createInfo, '验证通过的数据')
+      }
+    },
+    create() {
+
       // 保存原有工作
       BUS.save()
 
       // 获取更新createInfo
       this.getCreateInfo()
       // 验证通过的创建文件信息createInfo
+      if(!this.createInfo) alert('文件名验证不通过')
       if (this.createInfo) {
         // 将创建文件信息存在localStorage
         BUS.saveInLocal(this.createInfo.fileName, this.createInfo.info, '')
 
         // 清空上次文件的数据
         BUS.markdownData = ''
-        console.log(this.createInfo, 'this.createInfo')
 
         // 更新文件列表
 
         BUS.getFileList()
-        BUS.$emit('created', this.createInfo)
+        // BUS.$emit('created', this.createInfo)
         BUS.createShow = false
         // 正在编辑文件的文件信息
         BUS.editingFile = this.createInfo
@@ -305,7 +341,7 @@ export default {
       // 每次修改信息界面退出,重置表单数据
       if (!v) this.resetInfoValue()
     },
-    reviseingInfo: function (v) {
+    reviseingInfo(v) {
       if (v && !v.revised) {
         this.reviseInit()
       }
