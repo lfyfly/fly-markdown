@@ -1,52 +1,230 @@
 import Vue from 'vue'
+// ________ console.log辅助_____________________________
+
+//记录执行顺序流程
+window.i = 0
+window.I = () => {
+  window.i++
+  return window.i + '.'
+}
+
+window.RE = (observerData) => {
+  return JSON.parse(JSON.stringify(observerData))
+}
+
+window.log = function (doWhat, dataKey, _this) {
+
+  console.log(
+    '%c ' + window.I() + doWhat + '【初始化】', 'color:red;font-size:14px;', '\n',
+    `${dataKey}:`, window.RE(_this[dataKey]), '\n',
+    `位置：[${_this.$options.name}]`
+  )
+}
+// 触发事件（某个操作之后）执行
+window.eLog = function (option, _this) {
+  console.log(`%c ${window.I()}${option} ↓` + '【操作】', 'color:blue;font-size:14px;', '\n',
+    `位置：[${_this.$options.name}]`
+  )
+}
+// 验证
+window.vLog = function (option, condition, _this) {
+  var vResult = condition ? true : false
+  console.log(`%c ${window.I()}【验证】 ${option} -> `, 'color:orange;font-size:14px;', vResult, '\n',
+    `位置：[${_this.$options.name}]`
+  )
+}
+//watch
+window.wLog = function (data, _arguments, _this) {
+  var newV = _arguments[0] ? window.RE(_arguments[0]) : ''
+  var oldV = _arguments[1] ? window.RE(_arguments[1]) : ''
+  console.log(`%c ${window.I()}【watch】 ${data} 【发生变动】`, 'color:green;font-size:14px;', '\n',
+    '新值', newV, '\n',
+    '旧值', oldV, '\n',
+    `位置：[${_this.$options.name}]`
+  )
+}
+
+// ________ console.log辅助-结束______________________________
+
+var RE = (observerData) => {
+  return JSON.parse(JSON.stringify(observerData))
+}
+// ___________________________________________________
 
 export default new Vue({
+  name: 'bus.js',
   data: {
-    // 移动端判断
-    isMobile: false,
-    // 目录的显示状态
-    catalogShow: false,
+    //——————————————————————————————设备信息——————————————————————————————————————————
 
-    // textarea 是否被折叠
-    textareaShow: true,
+    isMobile: false, // 是否移动端判断
+    winWidth: NaN, //  window.innerWidth , 浏览器窗口调整时会动态更改
 
-    // 创建文件界面是否显示
-    createShow: false,
-    // 修改文件名
-    reviseShow: false,
-    // 正在修改文件信息
-    reviseingInfo: null,
+    //———————————————————————————设备信息-结束——————————————————————————————————————————
 
-    // 时候已经加载文档或创建一个文档，进入编辑模式
-    // editingFile正在编辑的文件数据对象（包括, fileName info）
-    editingFile: null,
-    // 正在编辑文件的markdown数据
-    // 与markdown中同步
-    markdownData: '',
-    // localstorage中拉取的文件列表
+
+    //———————————————————————————————组件状态——————————————————————————————————————————
+
+    //【 markdown-html.vue 】
+    catalogShow: false, // 目录的显示状态
+    //【 markdown-input.vue 】
+    textareaShow: true, // textarea 是否被折叠
+    fileListShow: false, // 文件列表显示
+    //【 组件：new-markdown.vue 】
+    createShow: false, // 创建文件界面显示状态
+    reviseShow: false, // 修改文件信息界面显示状态
+    //【 组件：rename.vue 】
+    renameShow: false, // 处理拖拽时多文件名冲突组件显示状态
+    // 【 组件：read-local-file.vue 】
+    readLocalFileShow: false, // read-local-file 的显示
+
+    //  显示tip，一段时间后消失
+    tipShow: { content: '', state: 'false', style: '', timer: null },
+
+    //—————————————————————————组件状态-结束———————————————————————————————————————
+
+    //———————————————————————————共享数据——————————————————————————————————————————
+    // 正在编辑文件数据
+    // 【数据来源】
+    //    1.新建文件
+    //    2.localStorage读取
+    //    2.导入本地文件
+    editingFile: null, //（对象格式：{ fileName,info:[{key ,value, link}]}）
+    markdownData: '', // 正在编辑文件的markdown内容字符串
+
+    // 正在修改的文件的文件信息
+    // 【数据来源】： 点击文件列表左边的修改图标，从localStorage读取
+    reviseingInfo: null, // 对象格式同 [ editingFile ]
+
+    // 文件列表
+    // 【数据来源】 从localstorage中拉取
     fileList: [],
-    // markdown-input 文件列表显示
-    fileListShow: false,
-    // read-local-file 的显示
-    readLocalFileShow: false,
-    // 处理拖拽多文件名冲突组件
-    renameShow: false,
+
+    // 待-重名的文件列表
+    // 【数据来源】 拖拽多文件加载时，文件名与localStroge冲突
     renameFileList: [],
+
+    // 待-加载如localStroge的文件列表
+    // 【数据来源】 拖拽多文件加载时，符合要求的.md文件组成的数组
     LoadFileList: [],
 
-    // 保存所有此类型（ 显示tip，一段时间后消失）的定时器
-    tipTimer: {},
-    tipShows: {},
-    tipShow: { content: '', state: 'false', style: '', timer: null }
+    //—————————————————————————共享数据-结束———————————————————————————————————
+
   },
   computed: {
 
   },
   methods: {
+    // ———————————————————————————初始化数据方法—————————————————————————————————————
+    // created生命周期中调用
+    init() {
+      this.initIsMobile()
+      this.initFileList()
+      this.initWinWidth()
+      // 动态数据初始化
+      window.addEventListener('resize', this.resizeInitWinWidth)
+    },
+
+
+    initIsMobile() {
+      if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|ios)/i)) this.isMobile = true
+
+      window.log('是否为移动端?', 'isMobile', this)
+    },
+
+    initWinWidth() {
+      this.winWidth = window.innerWidth
+      window.log('浏览器（设备）宽度?', 'winWidth', this)
+    },
+    resizeInitWinWidth() {
+      window.eLog('window.resize', this)
+      this.initWinWidth()
+    },
+
+    initFileList() {
+      // localStorage 数据结构
+      // localStorage.fileName = [{key, value, link},{key, value, link}]  最多两条数据
+      // localStorage.$Data$fileName = markdownData
+      this.fileList = Object.keys(localStorage).filter((v, i) => {
+        // 去除'$Data$'后缀 表示文件的数据
+        return v.indexOf('$Data$') === -1
+      })
+      window.log('文件列表', 'fileList', this)
+    },
+
+
+    //———————————————————————————初始化数据方法-结束———————————————————————————————————
+
+    //————————————————————————————全局方法———————————————————————————————————
+    // 获得文件的信息数组 [格式: {key, value, link}]
+    getFileInfo(fileName) {
+      var infoStr = localStorage[fileName]
+      var info = !infoStr ? [] : JSON.parse(infoStr)
+      return { fileName, info }
+    },
+
+    // 保存【一个】文件数据到 localStorage
+    saveInLocal(fileName, info, markdownData) {
+      localStorage[fileName] = info ? JSON.stringify(info) : ''
+      localStorage[fileName + '$Data$'] = markdownData
+    },
+
+    // 保存【一组】文件数据到 localStorage
+    saveFiles2LocalStorage(fileArr) {
+      fileArr.forEach((file) => {
+        // 去除扩展名
+        var fileName = file.fileName.replace('.md', '')
+        this.saveInLocal(fileName, file.fileInfo, file.fileData)
+      })
+    },
+
+    // 检测加载文件（新建文件名，修改文件名）是否和 localStorage 中的文件数据重名
+    hadSameFile(fileName) {
+      if (!fileName) return
+
+      window.vLog('是否重名', this.fileList.length != 0 && this.fileList.indexOf(fileName) != -1, this)
+      // 存在相同文件名
+      if (this.fileList.length != 0 && this.fileList.indexOf(fileName) != -1) return true
+    },
+    //——————————————————————————————全局方法-结束——————————————————————————————————
+
+    //———————————————————————————抽象的操作方法———————————————————————————————————
+    // 删除文件在 localStorage 的数据
+    removeFileData(fileName) {
+      localStorage.removeItem(fileName)
+      localStorage.removeItem(fileName + '$Data$')
+      // 刷新文件列表
+      this.initFileList()
+      // 如果当前文件为删除文件
+      if (this.editingFile && fileName === this.editingFile.fileName) {
+        this.textareaShow = true
+        this.editingFile = null
+        this.markdownData = ''
+      }
+    },
+    // 完善的数据保存
+    // - enter换行保存
+    // - 新建文件
+    // - 切换文件保存
+    // - 定时保存
+    save() {
+      if (this.editingFile && this.editingFile.fileName) {
+        localStorage[this.editingFile.fileName + '$Data$'] = this.markdownData
+        window.eLog(`文件 [${this.editingFile.fileName}] 保存成功`, this)
+      }
+    },
+    // 从localstorage中打开一个文件
+    openAfile(fileName) {
+      this.editingFile = this.getFileInfo(fileName)
+      this.markdownData = localStorage[fileName + '$Data$']
+
+      window.eLog(`打开一个文件 [${this.editingFile.fileName}] `, this)
+
+    },
+    //———————————————————————————共享数据处理方法-结束———————————————————————————————————
+
     // 显示tip，一段时间后消失
     // 未完成，将所有组件的tip进行集中管理
     showTipFn({ content, timeOut = 2000, style, condition = 'withoutCondition' }) {
-      console.log(content, timeOut, style, condition)
       if (!condition) return
 
       this.tipShow.content = content
@@ -60,111 +238,37 @@ export default new Vue({
       this.tipShow.timer = setTimeout(() => {
         this.tipShow.state = false
       }, timeOut)
+
+      window.eLog(`显示tip`, this)
+
+      // 显示tip
       return true
     },
-
-    // ———————————————————————————初始化函数—————————————————————————————————————
-    init() {
-      this.initIsMobile()
-    },
-    // 初始化的函数 ------------------------
-    initIsMobile() {
-      if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|ios)/i)) this.isMobile = true
-    },
-    // ———————————————————————————初始化函数结束——————————————————————————————————
-
-
-    removeFileData(fileName) {
-      alert(fileName)
-      localStorage.removeItem(fileName)
-      localStorage.removeItem(fileName + '$Data$')
-      // 刷新文件列表
-      this.getFileList()
-      // 如果当前文件为删除文件
-      if (fileName === this.editingFile.fileName) {
-        this.textareaShow = true
-        this.editingFile = null
-        this.markdownData = ''
-      }
-    },
-    getFileInfo(fileName) {
-      var infoStr = localStorage[fileName]
-      var info = !infoStr ? [] : JSON.parse(infoStr)
-      return { fileName, info }
-    },
-    openAfile(fileName) {
-
-      this.editingFile = this.getFileInfo(fileName)
-      this.markdownData = localStorage[fileName + '$Data$']
-    },
-    saveFiles2LocalStorage(fileArr) {
-      fileArr.forEach((file) => {
-        // 去除扩展名
-        var fileName = file.fileName.replace('.md', '')
-        this.saveInLocal(fileName, file.fileInfo, file.fileData)
-      })
-    },
-
-    // 保存数据到 localStorage`
-    saveInLocal(fileName, info, markdownData) {
-      localStorage[fileName] = info ? JSON.stringify(info) : ''
-      localStorage[fileName + '$Data$'] = markdownData
-    },
-    hadSameFile(fileName) {
-      if (fileName) {
-        // 存在相同文件名
-        if (this.fileList.length != 0 && this.fileList.indexOf(fileName) != -1) return true
-      }
-    },
-    // 完善的数据保存
-    // - enter换行保存
-    // - 新建文件
-    // - 切换文件保存
-    // - 定时保存
-    save() {
-      if (this.editingFile && this.editingFile.fileName) {
-        localStorage[this.editingFile.fileName + '$Data$'] = this.markdownData
-        console.log(this.editingFile.fileName + ' 保存成功')
-      }
-    },
-
-    getFileList() {
-      console.log('更新文件列表')
-      this.fileList = Object.keys(localStorage).filter((v, i) => {
-
-        // 去除'$Data$'后缀 表示文件的数据
-        // 去除'$Data$'后缀 如果在arr中
-        return v.indexOf('$Data$') === -1
-      })
-    }
   },
+
   created() {
     // localStorage.clear()
     this.init()
-
-    this.getFileList()
   },
   watch: {
-    markdownData: function () {
-      console.log(this.markdownData)
-    },
     renameFileList: function (renameFileList) {
+      window.wLog('renameFileList', arguments, this)
+
       // rename 组件操作，然后把之后列表赋值给 LoadFileList
       if (renameFileList.length === 0) return
       // 1. 打开rename组件
       this.readLocalFileShow = false
       this.renameShow = true
-      alert(1213)
-
     },
     LoadFileList: function (fileArr) {
-      console.log('123', fileArr)
 
+
+      window.wLog('LoadFileList', arguments, this)
 
       // 储存到localStorage
       this.saveFiles2LocalStorage(fileArr)
       // 更新文件列表
-      this.getFileList()
+      this.initFileList()
 
       // 如果操作的是一个文件，那么就打开这个文件
       if (this.LoadFileList.length === 1) {
@@ -174,39 +278,5 @@ export default new Vue({
         this.fileListShow = true
       }
     },
-    // 有文件信息要修改
-    // fileInfo格式 {fileName,info:[]}
-    reviseingInfo: function (fileInfo) {
-      alert('change')
-      console.log('change', fileInfo)
-      console.log('fileInfo', fileInfo, this.reviseingInfo)
-      if (!fileInfo) return
-      // 文件数据未修改过，所以要弹出组件践行修改
-      if (!fileInfo.revised) {
-        this.reviseShow = true
-        return
-      }
-
-
-      // 信息修改过了
-      // 保存新的信息
-      console.log(fileInfo.fileName, fileInfo.info, localStorage[fileInfo.fileName + '$Data$'])
-      this.saveInLocal(fileInfo.fileName, fileInfo.fileInfo, localStorage[fileInfo.oldFileName + '$Data$'])
-
-      // 删除旧得信息
-      // 如果文件没有被修改，只是修改了文件信息
-      // 上面保存发生了覆盖，所以不用移除就得文件数据
-      if (fileInfo.oldFileName != fileInfo.fileName) this.removeFileData(fileInfo.oldFileName)
-
-      // 更新文件列表
-      this.getFileList()
-      this.reviseShow = false
-
-      // 打开修改的文件
-      this.openAfile(this.reviseingInfo.fileName)
-
-      // 清除 需要修改的文件
-      this.reviseingInfo = null
-    }
   }
 })

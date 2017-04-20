@@ -20,15 +20,14 @@ a {
   font-family: $font-family;
 }
 
-
+.catalog-active{
+  color: $catalog-active-color!important;
+}
 
 .markdown-catalog {
   // 目录标题缩进
   $catalog-margin: .8em;
-  &>ul {
-    // margin-top: $catalog-margin;
-    margin-left: $catalog-margin;
-  }
+
   li {
     list-style: none;
   }

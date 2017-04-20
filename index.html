@@ -4,13 +4,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>fly-markdown</title>
   <script>
     var winWdith = window.innerWidth
-    if (winWdith < 320) winWdith = 320
+    if (winWdith < 320 || winWdith > 440) winWdith = 320
     document.documentElement.style.fontSize = winWdith / 3.75 + 'px';
     window.addEventListener('resize', function () {
-      console.log('resize')
-      if (window.innerWidth < 320) return
+      if (window.innerWidth < 320 || window.innerWidth > 440) return
       document.documentElement.style.fontSize = window.innerWidth / 3.75 + 'px';
     })
   </script>
@@ -92,7 +92,6 @@ Darcula color scheme from the JetBrains family of IDEs
       color: #7f7f7f;
     }
   </style>
-  <!--<script src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.10.0/highlight.min.js'></script>-->
   <title>vue_origin</title>
 </head>
 

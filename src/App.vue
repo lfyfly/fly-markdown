@@ -84,7 +84,7 @@ export default {
           this.htmlContainerEl.style.bottom = this.markdownInputEl.offsetHeight + 'px'
         })
       } else {
-        this.htmlContainerEl.style = ''
+        this.htmlContainerEl.removeAttribute('style')
       }
     },
     resposeScroll() {
@@ -113,7 +113,7 @@ export default {
 
         } else { // 屏幕大于440 的桌面端和移动端不一样
           this.htmlScrollEl.style.borderBottom = "none"
-          var height = this.padInputHeight;
+          var height = this.padInputHeight
           oInput.style.left = '0'
           oInput.style.bottom = '0'
           oInput.style.top = 'auto'
@@ -147,13 +147,14 @@ export default {
     window.addEventListener('resize', this.textareaFold)
   },
   components: {
-    markdownInput,
-    markdown2html,
     markdownHeader,
+    markdown2html,
+    markdownInput,
     newMarkdown,
     rename
   },
-
+  created() {
+  }
 }
 </script>
 

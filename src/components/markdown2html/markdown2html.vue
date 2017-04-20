@@ -2,50 +2,55 @@
 <style lang="scss">
 @import '../../scss/skin/default.scss';
 
-
 .markdown2html {
-  width: 100%;
   position: absolute;
   top: $header-height+$separation * 0.5;
-  bottom: $separation; // 展开
-  $catalog-btn-height: 20px;
-  $catalog-btn-color: #606060;
-  $catalog-btn-height-s: $catalog-btn-height / 5;
+  bottom: $separation;
 
-
+  width: 100%;
 
   .markdown-catalog {
     position: absolute;
     left: $separation;
-    width: $catolog-width;
-    height: 100%;
-    padding: 1em 0;
-    overflow: auto;
-    box-sizing: border-box; // border: 1px solid;
     border-top: $separation / 2 solid $main-color;
     border-bottom: $separation / 2 solid $main-color;
+
+    overflow: auto;
+
+    box-sizing: border-box;
+    width: $catolog-width;
+    height: 100%;
+    padding: 1em .6em;
+
+    li a {
+      @extend %fontOver;
+    }
   }
   .med-line {
     position: absolute;
+
     height: 100%;
     width: $separation / 2;
+    margin-left: $catolog-width + $separation * 2;
     background: $main-color;
-    margin-left: $catolog-width+$separation * 2;
   }
   .markdown-html {
-    position: relative;
+    position: relative; // 计算标题的offsetTop值
+    overflow: auto;
+
+    box-sizing: border-box;
+    height: 100%;
+    padding: $separation;
     margin-left: $catolog-width+$separation * 3.5;
-    margin-right: $separation; // border: $separation / 2 solid;
+    margin-right: $separation;
     border-top: $separation / 2 solid $main-color;
     border-bottom: $separation / 2 solid $main-color;
-    padding: $separation;
-    height: 100%;
-    overflow: auto;
-    box-sizing: border-box; // 这真是极好的
+
     &:after {
+      visibility: hidden;
+
       content: '输入辅助，不可见';
-      font-size: 40px;
-      opacity: 0;
+      font-size: 40px; // 这真是极好的
     }
   }
 }
@@ -56,14 +61,15 @@
 .markdown2html
   transition(name="slide")
     .markdown-catalog(v-show="catalogShow", ref="catalog")
+      //- 最多三层目录
       ul(v-for="v1 in catalogArr")
         li: a.title.level1(:href="'#'+v1.title") {{v1.title}}
-        ul(v-if="v1.children",v-for="v2 in v1.children")
+        ul(v-if="v1.children && catalogLevel>=2",v-for="v2 in v1.children")
           li: a.title.level2(:href="'#'+v2.title") {{v2.title}}
-          ul(v-if="v2.children",v-for="v3 in v2.children")
+          ul(v-if="v2.children && catalogLevel>=3",v-for="v3 in v2.children")
             li: a.title.level3(:href="'#'+v3.title") {{v3.title}}
   .med-line
-  .markdown-html(ref="markdownContent")
+  .markdown-html(v-html="markdownHtml", ref="markdownHtml")
 
 
 
@@ -85,45 +91,106 @@ export default {
   data() {
     return {
       msg: 'this is from markdown2html.vue',
-      oldWindowWidth: 0,
       titleElsArr: [],
-      catalogArr: []
+      catalogArr: [],
+      colorArr: ['red', 'green', 'blue']
+    }
+  },
+  props: {
+    catalogLevel: { // 目录显示的标题级别数
+      type: Number,
+      default: 3  // 值 1 || 2 || 3
+    },
+    IgnoreCatalog: { // 忽略第一个标题（因为有时第一个标题是作为文章的标题）
+      type: Boolean,
+      default: false  // false || true
+    },
+    usehighLightCode: { // 时候使用代码高亮
+      type: Boolean,
+      default: true  // false || true
     }
   },
   computed: {
+    winWidth() {
+      return BUS.winWidth
+    },
     catalogShow() {
       return BUS.catalogShow
     },
     markdownData() {
       return BUS.markdownData
-    }
+    },
+    markdownHtml() {
+      return marked(this.ParsecolorTag(this.markdownData))
+    },
+  },
+  created() {
+    this.initCatalogShow()
+    this.$watch('winWidth', this.initCatalogShow)
   },
   methods: {
+
+    // —————————————————————————初始化————————————————————————————
+
+    initCatalogShow() {  // 当屏幕宽度大于800时 有 media 来控制目录显示
+      BUS.catalogShow = BUS.winWidth > 800 ? true : false
+    },
+    // ———————————————————————初始化-结束——————————————————————
+
+
+    // —————————————————————————数据处理方法————————————————————————————
     trim(str) {
       return str.replace(/^\s|\s$/g, '')
     },
-    // 当屏幕宽度大于800时 有media 来控制目录显示
-    removeCatalogDisplay() {
-      var winWidth = window.innerWidth
-      // 不变 发生在移动端（输入法回收或者进入时会触发 resie）
-      if (winWidth === this.oldWindowWidth) return
-      this.oldWindowWidth = winWidth
-      if (window.innerWidth > 800) {
-        BUS.catalogShow = true
-      } else {
-        BUS.catalogShow = false
+
+    titleElsForEach() {
+      window.eLog('重塑标题元素，获取titleElsArr', this)
+
+      // 进行重置，在setTitle() 里重新进行添加
+      this.titleElsArr = []
+      var childrenEls = this.$refs.markdownHtml.children
+      for (var i = 0; i < childrenEls.length; i++) {
+        this.filterTitle(childrenEls[i], i, childrenEls)
+        this.setTableCaption(childrenEls[i], i, childrenEls)
       }
     },
+    // 重新设置标题元素（增加id 和 href）
+    filterTitle(el, i) {
+      // 非标题元素
+      if (!el.tagName.toLowerCase().match(/^h\d*$/)) return
 
+      this.titleElsArr.push(el)
+
+      var hmtlText = this.trim(el.textContent)
+      // marked的默认添加（中文字符就失效）
+      el.removeAttribute('id')
+      el.innerHTML = `<a class="title" href="#${hmtlText}" id="${hmtlText}">${el.innerHTML}</a>`
+
+    },
+    setTableCaption(el, i, children) {
+      if (el.tagName.toLowerCase() === 'table' && i != 0 && children[i - 1].innerHTML.indexOf('T-T ') != -1) {
+        var hmtlStr = children[i - 1].innerHTML
+        var captionStr = hmtlStr.replace('T-T ', '')
+        var oCaption = document.createElement('caption')
+        oCaption.innerHTML = captionStr
+        el.insertBefore(oCaption, el.children[0])
+        this.$refs.markdownHtml.removeChild(children[i - 1])
+      }
+    },
     // 最多三级目录，最高级目录不一定是h1
     // 不要跳级使用目录（ 如：h1 后不要跟 h3 ）
     getCatalogArr(title) {
+      //
       this.catalogArr = []
-      // 第一级别的title是h1 或者 h2 。。。
 
+      // 第一级别的title可以是第一个title的级别
       if (this.titleElsArr.length === 0) return
-      var rootTitleIndex = parseInt(this.titleElsArr[0].tagName.substring(1))
-      console.log('rootTitleIndex', rootTitleIndex, typeof rootTitleIndex)
+
+      // 第一个目录标题的索引
+      var firstIndex = this.titleElsArr.length > 2 && this.IgnoreCatalog ? 1 : 0
+
+      var rootTitleIndex = parseInt(this.titleElsArr[firstIndex].tagName.substring(1))
+
       this.titleElsArr.forEach((v, i) => {
         var tagName = v.tagName.toLowerCase()
         switch (tagName) {
@@ -150,55 +217,48 @@ export default {
         }
       })
     },
-    childrenForEach() {
-      // 进行重置，在setTitle() 里进行添加
-      this.titleElsArr = []
-      console.log(children)
-      var children = this.$refs.markdownContent.children
-      for (var i = 0; i < children.length; i++) {
-        this.setTitle(children[i], i, children)
-        this.setTableCaption(children[i], i, children)
+
+    // —————————————————————————数据处理方法————————————————————————————
+
+
+    // —————————————————————————具象方法————————————————————————————
+    highLightCode() {
+      if (!this.usehighLightCode) return
+
+      var codeEls = document.querySelectorAll('code')
+      if (codeEls.length === 0) return
+      for (var i = 0; i < codeEls.length; i++) {
+        hljs.highlightBlock(codeEls[i])
       }
     },
-    setTitle(v, i, children) {
-      if (v.tagName.toLowerCase().match(/^h\d*$/)) {
-        this.titleElsArr.push(v)
-
-        var hmtlText = this.trim(v.textContent)
-        v.innerHTML = `<a class="title" href="#${hmtlText}" id="${hmtlText}">${v.innerHTML}</a>`
-      }
-    },
-    setTableCaption(v, i, children) {
-      if (v.tagName.toLowerCase() === 'table' && i != 0 && children[i - 1].innerHTML.indexOf('T-T ') != -1) {
-        var hmtlStr = children[i - 1].innerHTML
-        var captionStr = hmtlStr.replace('T-T ', '')
-        var oCaption = document.createElement('caption')
-        oCaption.innerHTML = captionStr
-        v.insertBefore(oCaption, v.children[0])
-        this.$refs.markdownContent.removeChild(children[i - 1])
-      }
-    }
-  },
-  mounted() {
-    // 初始判断
-    this.removeCatalogDisplay()
-    window.addEventListener('resize', this.removeCatalogDisplay)
-  },
-  watch: {
-    markdownData: function () {
-
-      this.$refs.markdownContent.innerHTML = marked(this.markdownData)
-
-      this.$nextTick(() => {
-        this.childrenForEach()
-        this.getCatalogArr()
-        var codeEls = document.querySelectorAll('code')
-        console.log(codeEls)
-        for (var i = 0; i < codeEls.length; i++) {
-          hljs.highlightBlock(codeEls[i])
-        }
-
+    ParsecolorTag(markdownStr) {
+      var htmlStr = markdownStr
+      this.colorArr.forEach((color) => {
+        htmlStr = htmlStr.replace(new RegExp('\<'+color+'\>',"g"),`\<font color="${color}"\>`)
+        htmlStr = htmlStr.replace(new RegExp('<\/'+color+'>',"g"),`</font>`)
       })
+      return htmlStr
+    }
+    // —————————————————————————具象方法-结束————————————————————————————
+
+  },
+
+  watch: {
+    markdownHtml: function () {
+      this.$nextTick(() => {
+        this.highLightCode()
+
+        this.titleElsForEach()
+
+        if (!BUS.catalogShow) return
+        this.getCatalogArr()
+      })
+    },
+    catalogShow: function (catalogShow) {
+      // 懒渲染目录
+      // 展开目录的时候渲染新的目录
+      if (!catalogShow) return
+      this.getCatalogArr()
     }
   }
 }

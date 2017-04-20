@@ -2,55 +2,63 @@
 <style lang="scss">
 // 接受托在文件的区域大小
 .read-local-file {
-  overflow: hidden;
-  width: 100%;
-  background: rgba(0, 0, 0, .8);
-  color: #ccc;
   position: absolute;
   z-index: 1000;
   top: 30px;
   bottom: 0;
+
+  overflow: hidden;
+
+  width: 100%;
+  background: rgba(0, 0, 0, .8);
+
+  color: #ccc;
   text-align: center;
+
   .info-wraper {
-    width: 100%;
-    display: table;
-    margin: auto 0;
     position: absolute;
     top: 0;
     bottom: 0;
-    &>* {
-      display: inline-block;
+
+    display: table;
+
+    width: 100%;
+    margin: auto 0;
+
+    h3 {
+      width: 100%;
+      margin: auto;
+    }
+    .add-icon {
+      font-size: 50px;
+      color: #ccc;
+      &:hover {
+        cursor: pointer;
+        color: #17bd2b;
+      }
+      input {
+        display: none;
+      }
     }
   }
 
-  h3 {
-    width: 100%;
-    margin: auto;
-  }
-  .icon {
-    font-size: 50px;
-    color: #ccc;
-    &:hover {
-      cursor: pointer;
-      color: #17bd2b;
-    }
-    input {
-      display: none;
-    }
-  }
+
   .file-type-tip {
     position: absolute;
-    width: 100%;
-    text-align: center;
     top: 1em;
+
+    width: 100%;
+
+    text-align: center;
     color: red;
   }
   .cancel-import {
     position: absolute;
+    right: .2em;
+
+    font-size: 30px;
     line-height: 1;
     color: #919191;
-    font-size: 30px;
-    right: .2em;
     &:hover {
       color: #c92828;
     }
@@ -64,25 +72,20 @@ transition(name="fade")
   .read-local-file(v-show="readLocalFileShow")
     .info-wraper
       h3(v-if="!isMobile") 拖拽 .md 扩展名文件到此处加载
-      label.icon(title="打开一个markdown文件") +
+      label.add-icon(title="打开一个markdown文件") +
         input(type="file",style="display:none;",ref="fileInput",@change="openFile")
-    .file-type-tip(v-show="tipShow") 请选择正确 .md 文件再打开
-    //- .file-type-tip1(v-show="tipShow") 非 .md 扩展名文件自动过滤
     a.cancel-import(@click="cancelImport") ×
 </template>
 
 <!-- ——————————————↓JS—————————分界线———————————————————————— -->
 <script>
-import BUS from '../bus.js'
+import BUS from '../../bus.js'
 
 export default {
   name: 'read-local-file',
   data() {
     return {
-      msg: 'this is from read-local-file.vue',
-      tipShow: false,
-      // 记录都是其，用来清除
-      timer: null
+      msg: 'this is from read-local-file.vue'
     }
   },
   computed: {
@@ -91,18 +94,42 @@ export default {
     },
     readLocalFileShow() {
       return BUS.readLocalFileShow
-    }
+    },
   },
   methods: {
-    showTipFn() {
-      if (this.timer) clearTimeout(this.timer)
-      this.tipShow = true
-      this.timer = setTimeout(() => {
-        this.tipShow = false
-      }, 5000)
+    // ——————————————————————具象操作方法————————————————————————————
+    openFile(e) {
+      var file = e.target.files[0]
+      if (!file) return
+      // 不是md文件
+      if (!this.isMarkdownFile(file.name)) {
+        BUS.showTipFn({
+          content: '请选择正确 .md 文件再打开',
+          style: 'warn'
+        })
+        return
+      }
+      // 读取数据
+      this.readFile2Str(file).then((reslove) => {
+        // 读取完文件数据之后
+        if (BUS.hadSameFile(reslove.fileName)) { // 文件名冲突，弹出修改组件
+          BUS.renameFileList = [reslove]
+          this.renameShow = true
+        } else { // 文件名不冲突， 保存数据到localStorage, 打开文件
+          BUS.saveInLocal(reslove.fileName, reslove.fileInfo, reslove.fileData)
+          BUS.readLocalFileShow = false
+          BUS.openAfile(reslove.fileName)
+        }
+      })
     },
-    readFile2Str(file) {
-      // 返回promise对象
+
+    cancelImport() {
+      BUS.readLocalFileShow = false
+    },
+    //——————————————————————具象操作方法-结束————————————————————————————
+
+    readFile2Str(file) { // 返回promise对象
+
       return new Promise(function (reslove, reject) {
         var reader = new FileReader()
         reader.readAsText(file)
@@ -110,12 +137,14 @@ export default {
           // 解析文件信息数据
           var fileContent = reader.result
 
-          // 前者匹配
+          // (如果有)匹配出文件信息
           var fileInfo = null
           var fileData = fileContent
-          var fileInfoRes = fileContent.match(/^\-\-\-([\w\W]*)\-\-\-/)
+          var fileInfoRes = fileContent.match(/^\-\-\-([\w\W]*)\-\-\-\n\n/)
           if (fileInfoRes) {
             var fileInfoStr = fileInfoRes[0]
+            console.log(fileContent,'----------')
+            console.log(fileInfoRes,'=============')
             fileData = fileContent.replace(fileInfoStr, '')
           }
 
@@ -130,12 +159,13 @@ export default {
             })
 
             var valuePattern = /\:\s(.+)\n\n/g
-            var valuePattern1 = /\:\s\[(.+)\]\((.+)\)\n\n/
+            var valuePattern1 = /\:\s\[(.+)\](?:\((.+)\))?\n\n/
             var values = fileInfoStr.match(valuePattern)
-            alert(values)
+              console.log(values, 'hehe')
 
             var valuesArr = values.map((value) => {
               var match = value.match(valuePattern1)
+
               return { value: match[1], link: match[2] ? match[2] : '' }
             })
             // 在这呢
@@ -151,27 +181,21 @@ export default {
         }
       })
     },
-    // 获取文件扩展名
-    getFileExtension(fileName) {
-      return fileName.match(/\.([^.]+)$/)[1]
-    },
-    // 判断是否为markdown文件
-    isMarkdownFile(fileName) {
-      return this.getFileExtension(fileName) === 'md'
-    },
-    // 重名过滤
-    // 文件过滤
-    //
+
+    // 拖拽多文件
+    // 符合要求的文件数组
     dragFn(event) {
-      if (event.type == "drogover") {
+      event.preventDefault()
+
+      if (event.type === 'dragover' || event.type === 'dragenter') {
         return
       }
-      event.preventDefault()
 
       var hasReapetFile = false
 
       // 过滤出来的.md文件
-      // 符合要求文件md文件（文件名未冲突）
+      // 符合要求文件md文件（文件名未冲突）BUS.LoadFileList
+      // 不符合要求（重名）md的文件， BUS.renameFileList -> 用户处理 ->BUS.LoadFileList
       var tasks = []
       var repeatFilesTasks = []
       if (event.type == "drop") {
@@ -210,59 +234,27 @@ export default {
           return
         }
         Promise.all(tasks).then((reslove) => {
-          // .md文件加载完成，把文件数据组成的数组传递出去
-          BUS.$emit('mdFilesloaded', reslove)
           // 符合要求的文件列表储存到bus中
           BUS.LoadFileList = reslove
-          console.log(reslove)
+
+          // 关闭加载组件
+          BUS.readLocalFileShow = false
+          // 展开文件列表
+          if (BUS.LoadFileList.length > 1) BUS.fileListShow = true
+
         })
       }
     },
-    openFile(e) {
-      //
-      var file = e.target.files[0]
-      if (!file) return
-      // 不是md文件
-      if (!this.isMarkdownFile(file.name)) {
-        this.showTipFn()
-        return
-      }
-
-
-
-      // 读取数据
-      this.readFile2Str(file).then((reslove) => {
-
-        if (BUS.hadSameFile(reslove.fileName)) {
-          BUS.renameFileList = [reslove]
-          this.renameShow = true
-        } else {
-          BUS.saveInLocal(reslove.fileName, reslove.fileInfo, reslove.fileData)
-          BUS.readLocalFileShow = false
-          BUS.openAfile(reslove.fileName)
-        }
-      })
+    // 获取文件扩展名
+    getFileExtension(fileName) {
+      return fileName.match(/\.([^.]+)$/)[1]
     },
-
-    cancelImport() {
-      BUS.readLocalFileShow = false
+    // 判断是否为markdown文件
+    isMarkdownFile(fileName) {
+      return this.getFileExtension(fileName) === 'md'
     },
-    // 重名检测（本地文件与localStorage）
   },
   mounted() {
-    console.log(localStorage)
-    // 关闭加载组件
-    BUS.$on('mdFilesloaded', () => {
-      BUS.readLocalFileShow = false
-    })
-
-
-    // 展开文件列表
-    BUS.$on('mdFilesloaded', () => {
-      if (BUS.LoadFileList.length > 1) BUS.fileListShow = true
-
-      console.log(localStorage)
-    })
 
     this.$el.addEventListener("dragenter", this.dragFn)
     this.$el.addEventListener("dragover", this.dragFn)
