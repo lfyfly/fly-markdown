@@ -126,18 +126,6 @@ export default {
         document.querySelector('.markdown2html').style.bottom = height + 'px'
       }
     },
-
-    // 数据保存
-    saveToLocalStorage() {
-      // 文件是否存在
-      alert(123)
-      // 没有则创建一个
-    },
-    setAutoSave() {
-      setInterval(this.saveToLocalStorage, saveToLocalStorage, this.autoSaveInterval)
-    },
-
-
   },
   mounted() {
     this.init()
@@ -152,8 +140,6 @@ export default {
     markdownInput,
     newMarkdown,
     rename
-  },
-  created() {
   }
 }
 </script>

@@ -1,4 +1,4 @@
-@import './layout.scss';
+@import './layout-var.scss';
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 1s;
@@ -40,11 +40,14 @@
       resize: none;
     }
     .markdown-option {
-      .icon-shouqi1,
-      .icon-zhankai1 {
+      .icon-shouqi:before,
+      .icon-zhankai1:before {
         transform-origin: center center;
         transform: rotate(-90deg);
-        margin-top: 0!important;
+        margin-top: 0px;
+      }
+      .icon-html:before{
+        margin-top: 1px;
       }
     }
     .fileList {

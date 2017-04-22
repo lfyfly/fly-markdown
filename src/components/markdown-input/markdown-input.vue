@@ -57,39 +57,14 @@
     .option-list {
       float: right;
     } // 图标不配套调整
-    .iconfont {
-      display: inline-block;
-      width: 30px;
-      text-align: center;
+    .iconfont:before {
       margin-top: 1px;
-      font-size: 18px;
-      &.icon-shouqi1,
-      &.icon-zhankai1 {
-        margin-top: 2px;
-      }
-      &.icon-iconfontxinjian {
-        margin-top: 0px;
-      }
-      &.icon-daoru-copy,
-      &.icon-save {
-        font-size: 19px;
-        margin-top: 2px;
-      }
-      &.icon-daochubeifen,
-      {
-        font-size: 20px;
-        margin-top: 2px;
-      }
-      &.icon-web_shouhu,
-      &.icon-web_xiangxiazhankai {
-        font-weight: bold;
-      }
-    }
-    .export-html {
       display: inline-block;
       width: 30px;
-      font-size: 17px;
       text-align: center;
+      font-size: 18px;
+
+
     }
   } // ————————————操作栏-结束—————————————
   //
@@ -264,11 +239,11 @@
     .option-list
       a.iconfont( @click="toggleFoldTextarea", :title="textareaShow? '收起编辑区': '展开编辑区'", :class="{ active: !textareaShow, 'icon-web_shouhui' :textareaShow, 'icon-web_xiangxiazhankai': !textareaShow }" )
       a.iconfont.icon-daoru-copy( @click="importFile", title="导入本地markdown文件" )
-      a.iconfont.icon-daochubeifen( @click="exportFileSure('markdown')", title="导出markdown文件到本地" )
-      a.export-html( @click="exportFileSure('html')", title="导出html文件到本地" ) [H]
-      a.iconfont.icon-save( @click="save", title="保存" )
+      a.iconfont.icon-export( @click="exportFileSure('markdown')", title="导出markdown文件到本地" )
+      a.iconfont.icon-html( @click="exportFileSure('html')", title="导出html文件到本地" )
+      a.iconfont.icon-baocun( @click="save", title="保存" )
       a.iconfont.icon-iconfontxinjian( @click="newMarkdown", title="新建",  :class="{active:!editingFile}" )
-      a.iconfont( :title="fileListShow?'收起目录':'展开目录'", @click="toggleFileListShow", :class="{active:fileListShow,'icon-shouqi1':fileListShow,'icon-zhankai1':!fileListShow}" )
+      a.iconfont( :title="fileListShow?'收起目录':'展开目录'", @click="toggleFileListShow", :class="{active:fileListShow,'icon-shouqi':fileListShow,'icon-zhankai1':!fileListShow}" )
 
   textarea( spellcheck="false",
             ref="textarea",
@@ -454,7 +429,6 @@ export default {
       if (e.target.title === '确认删除') {
 
         BUS.removeFileData(fileName)
-        alert(fileName)
 
         BUS.showTipFn({
           content: `文件 [${fileName}] 删除成功`,
@@ -487,7 +461,6 @@ export default {
       contenthtmlStr = contenthtmlStr.replace(/class=\"markdown-catalog.*?\"/, 'class=\"markdown-catalog catalog-hide\"')
       // 去除markdown2html的style属性
       contenthtmlStr = `<div class="markdown2html">${contenthtmlStr}</div>`
-      console.log(contenthtmlStr)
 
       var bodyHtml = headerHtmlStr + contenthtmlStr
       var htmlFileStr = htmlTemplate.replace('这里注入html的位置', bodyHtml)
@@ -517,7 +490,6 @@ export default {
       }
       infoWrite2File = infoWrite2File === '' ? '' : '---\n\n' + infoWrite2File + '---\n\n'
 
-      alert(infoWrite2File)
 
       var blob = new Blob([infoWrite2File, BUS.markdownData], { type: "text/plain;charset=utf-8" })
       FileSaver.saveAs(blob, BUS.editingFile.fileName + ".md")

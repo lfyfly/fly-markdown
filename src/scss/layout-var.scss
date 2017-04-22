@@ -1,4 +1,4 @@
-@import './style.scss';
+@import './style-var.scss';
 // 头部的高度
 $header-height:60px;
 // 元素块之间的间隔
@@ -10,5 +10,3 @@ $catolog-width:220px;
 // #$markdown-input 桌面端小于500px
 $textarea-height: 220px;
 $markdown-option-height: 30px;
-
-

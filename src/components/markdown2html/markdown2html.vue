@@ -144,7 +144,7 @@ export default {
     },
 
     titleElsForEach() {
-      window.eLog('重塑标题元素，获取titleElsArr', this)
+      // window.eLog('重塑标题元素，获取titleElsArr', this)
 
       // 进行重置，在setTitle() 里重新进行添加
       this.titleElsArr = []
@@ -234,9 +234,9 @@ export default {
     ParsecolorTag(markdownStr) {
       var htmlStr = markdownStr
       this.colorArr.forEach((color) => {
-        htmlStr = htmlStr.replace(new RegExp('\<'+color+'\>',"g"),`\<font color="${color}"\>`)
-        htmlStr = htmlStr.replace(new RegExp('<\/'+color+'>',"g"),`</font>`)
+        htmlStr = htmlStr.replace(new RegExp('\<' + color + '\>', "g"), `\<font color="${color}"\>`)
       })
+      htmlStr = htmlStr.replace(/\<\/\>/g, `</font>`)
       return htmlStr
     }
     // —————————————————————————具象方法-结束————————————————————————————

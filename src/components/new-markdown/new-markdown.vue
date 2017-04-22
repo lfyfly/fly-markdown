@@ -209,7 +209,6 @@ export default {
   computed: {
     // 共享数据
     reviseingInfo() {
-      console.log('BUS.reviseingInfo', BUS.reviseingInfo)
       return BUS.reviseingInfo
     },
     // 组件状态
@@ -269,7 +268,7 @@ export default {
         // createInfo 已经符合要求的创建信息
         this.createInfo = obj
 
-        window.log('验证通过的数据', 'createInfo', this)
+        // window.log('验证通过的数据', 'createInfo', this)
       }
     },
     //————————————————————————————————验证和获取表单数据方法-结束——————————————————————————

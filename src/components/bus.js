@@ -1,50 +1,7 @@
 import Vue from 'vue'
+import '../js/vue-log.js'
 // ________ console.log辅助_____________________________
 
-//记录执行顺序流程
-window.i = 0
-window.I = () => {
-  window.i++
-  return window.i + '.'
-}
-
-window.RE = (observerData) => {
-  return JSON.parse(JSON.stringify(observerData))
-}
-
-window.log = function (doWhat, dataKey, _this) {
-
-  console.log(
-    '%c ' + window.I() + doWhat + '【初始化】', 'color:red;font-size:14px;', '\n',
-    `${dataKey}:`, window.RE(_this[dataKey]), '\n',
-    `位置：[${_this.$options.name}]`
-  )
-}
-// 触发事件（某个操作之后）执行
-window.eLog = function (option, _this) {
-  console.log(`%c ${window.I()}${option} ↓` + '【操作】', 'color:blue;font-size:14px;', '\n',
-    `位置：[${_this.$options.name}]`
-  )
-}
-// 验证
-window.vLog = function (option, condition, _this) {
-  var vResult = condition ? true : false
-  console.log(`%c ${window.I()}【验证】 ${option} -> `, 'color:orange;font-size:14px;', vResult, '\n',
-    `位置：[${_this.$options.name}]`
-  )
-}
-//watch
-window.wLog = function (data, _arguments, _this) {
-  var newV = _arguments[0] ? window.RE(_arguments[0]) : ''
-  var oldV = _arguments[1] ? window.RE(_arguments[1]) : ''
-  console.log(`%c ${window.I()}【watch】 ${data} 【发生变动】`, 'color:green;font-size:14px;', '\n',
-    '新值', newV, '\n',
-    '旧值', oldV, '\n',
-    `位置：[${_this.$options.name}]`
-  )
-}
-
-// ________ console.log辅助-结束______________________________
 
 var RE = (observerData) => {
   return JSON.parse(JSON.stringify(observerData))
@@ -128,15 +85,13 @@ export default new Vue({
     initIsMobile() {
       if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|ios)/i)) this.isMobile = true
 
-      window.log('是否为移动端?', 'isMobile', this)
+      // window.log('是否为移动端?', 'isMobile', this)
     },
 
     initWinWidth() {
       this.winWidth = window.innerWidth
-      window.log('浏览器（设备）宽度?', 'winWidth', this)
     },
     resizeInitWinWidth() {
-      window.eLog('window.resize', this)
       this.initWinWidth()
     },
 
@@ -148,7 +103,7 @@ export default new Vue({
         // 去除'$Data$'后缀 表示文件的数据
         return v.indexOf('$Data$') === -1
       })
-      window.log('文件列表', 'fileList', this)
+      // window.log('文件列表', 'fileList', this)
     },
 
 
@@ -181,7 +136,7 @@ export default new Vue({
     hadSameFile(fileName) {
       if (!fileName) return
 
-      window.vLog('是否重名', this.fileList.length != 0 && this.fileList.indexOf(fileName) != -1, this)
+      // window.vLog('是否重名', this.fileList.length != 0 && this.fileList.indexOf(fileName) != -1, this)
       // 存在相同文件名
       if (this.fileList.length != 0 && this.fileList.indexOf(fileName) != -1) return true
     },
@@ -209,7 +164,8 @@ export default new Vue({
     save() {
       if (this.editingFile && this.editingFile.fileName) {
         localStorage[this.editingFile.fileName + '$Data$'] = this.markdownData
-        window.eLog(`文件 [${this.editingFile.fileName}] 保存成功`, this)
+
+        // window.eLog(`文件 [${this.editingFile.fileName}] 保存成功`, this)
       }
     },
     // 从localstorage中打开一个文件
@@ -217,7 +173,7 @@ export default new Vue({
       this.editingFile = this.getFileInfo(fileName)
       this.markdownData = localStorage[fileName + '$Data$']
 
-      window.eLog(`打开一个文件 [${this.editingFile.fileName}] `, this)
+      // window.eLog(`打开一个文件 [${this.editingFile.fileName}] `, this)
 
     },
     //———————————————————————————共享数据处理方法-结束———————————————————————————————————
@@ -252,7 +208,7 @@ export default new Vue({
   },
   watch: {
     renameFileList: function (renameFileList) {
-      window.wLog('renameFileList', arguments, this)
+      // window.wLog('renameFileList', arguments, this)
 
       // rename 组件操作，然后把之后列表赋值给 LoadFileList
       if (renameFileList.length === 0) return
@@ -263,7 +219,7 @@ export default new Vue({
     LoadFileList: function (fileArr) {
 
 
-      window.wLog('LoadFileList', arguments, this)
+      // window.wLog('LoadFileList', arguments, this)
 
       // 储存到localStorage
       this.saveFiles2LocalStorage(fileArr)

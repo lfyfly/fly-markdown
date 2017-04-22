@@ -143,8 +143,6 @@ export default {
           var fileInfoRes = fileContent.match(/^\-\-\-([\w\W]*)\-\-\-\n\n/)
           if (fileInfoRes) {
             var fileInfoStr = fileInfoRes[0]
-            console.log(fileContent,'----------')
-            console.log(fileInfoRes,'=============')
             fileData = fileContent.replace(fileInfoStr, '')
           }
 
@@ -161,7 +159,6 @@ export default {
             var valuePattern = /\:\s(.+)\n\n/g
             var valuePattern1 = /\:\s\[(.+)\](?:\((.+)\))?\n\n/
             var values = fileInfoStr.match(valuePattern)
-              console.log(values, 'hehe')
 
             var valuesArr = values.map((value) => {
               var match = value.match(valuePattern1)
@@ -175,7 +172,6 @@ export default {
             })
           }
 
-          console.log('---------------', fileInfo)
 
           reslove({ fileName: file.name.replace('.md', ''), fileInfo, fileData })
         }
@@ -200,7 +196,6 @@ export default {
       var repeatFilesTasks = []
       if (event.type == "drop") {
         var files = event.dataTransfer.files
-        console.log(files.length, 'files.length')
         for (var i = 0; i < files.length; i++) {
           // md文件过滤，显示提示
           if (!this.isMarkdownFile(files[i].name)) {
@@ -222,7 +217,6 @@ export default {
         if (repeatFilesTasks.length > 0) {
           hasReapetFile = true
           Promise.all(repeatFilesTasks).then((reslove) => {
-            console.log(reslove)
             BUS.renameFileList = reslove
           })
         }
