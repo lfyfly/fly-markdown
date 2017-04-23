@@ -8,7 +8,7 @@ import vueDragDrag from 'vue-dragdrag'
 Vue.use(vueDragDrag)
 // 在导出时调用
 
-import './img/icon-font/iconfont.css'
+import '../static/icon-font/iconfont.css'
 
 
 
