@@ -1,7 +1,7 @@
 # 什么是fly-markdown
 > 运行在浏览器的markdown编辑器
 
-> 马上使用[**fly-markdown**]()
+> 马上使用[**fly-markdown**](https://lfyfly.github.io/fly-markdown/)
 
 ## 支持标准markdown语法
 - [**markdown语法参考**](http://www.appinn.com/markdown)
@@ -59,4 +59,4 @@ row 2 col 1 | row 2 col 2
 
 - **编译后样式：** <red>红色</> - <green>绿色</> - <blue>蓝色</>
 
-##  欢迎使用[**fly-markdown**]()
+##  欢迎使用[**fly-markdown**](https://lfyfly.github.io/fly-markdown/)

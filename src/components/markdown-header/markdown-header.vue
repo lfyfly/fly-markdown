@@ -77,11 +77,11 @@
 <template lang="pug">
 .markdown-header
   a.catalog-btn(@click="toggleCatalog")
-  a(href="", target="_blank", title="制作软件地址").made-by made by flyMarkdown
+  a(href="https://github.com/lfyfly/fly-markdown", target="_blank", title="制作软件地址").made-by made by flyMarkdown
 
   .document-header(:class="{noFileInfo: IsNoFileInfo }")
     h1.document-title {{editingFile? editingFile.fileName: 'fly-markdown'}}
-    a.title-icon.iconfont.icon-github(v-if="!editingFile")
+    a.title-icon.iconfont.icon-github(href="https://lfyfly.github.io/fly-markdown/",title="github" target="_blank", v-if="!editingFile")
 
     //- 还未开始编辑显示初始值(软件作者信息)，如果没有填入信息就不写入info
   .document-info(v-if="editingFile===null || ( editingFile!==null && editingFile.info.length!=0 )")
@@ -102,9 +102,9 @@ export default {
       msg: 'this is from markdown-header.vue',
     }
   },
-  filters:{
+  filters: {
     addHttp(v) {
-      return v.link?(v.link.indexOf('http://')===-1? 'http://'+v.link:v.link): false
+      return v.link ? (v.link.indexOf('http') === -1 ? 'http://' + v.link : v.link) : false
     }
   },
   computed: {
@@ -118,13 +118,13 @@ export default {
       // 默认信息
       return BUS.editingFile && BUS.editingFile.info.length > 0 ?
         BUS.editingFile.info :
-        BUS.editingFile?null:[{ key: '软件作者', value: 'lfyfly' }, { key: '邮箱', value: '410793635@qq.com' }]
+        BUS.editingFile ? null : [{ key: '软件作者', value: 'lfyfly' }, { key: '邮箱', value: '410793635@qq.com' }]
     },
     catalogShow() {
       return BUS.catalogShow
     },
     IsNoFileInfo() {
-      return  Boolean(BUS.editingFile && !this.fileInfo)
+      return Boolean(BUS.editingFile && !this.fileInfo)
     }
   },
   methods: {
