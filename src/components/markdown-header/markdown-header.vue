@@ -81,7 +81,7 @@
 
   .document-header(:class="{noFileInfo: IsNoFileInfo }")
     h1.document-title {{editingFile? editingFile.fileName: 'fly-markdown'}}
-    a.title-icon.iconfont.icon-github(href="https://lfyfly.github.io/fly-markdown/",title="github" target="_blank", v-if="!editingFile")
+    a.title-icon.iconfont.icon-github(href="https://github.com/lfyfly/fly-markdown",title="github" target="_blank", v-if="!editingFile")
 
     //- 还未开始编辑显示初始值(软件作者信息)，如果没有填入信息就不写入info
   .document-info(v-if="editingFile===null || ( editingFile!==null && editingFile.info.length!=0 )")
