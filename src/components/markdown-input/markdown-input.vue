@@ -59,12 +59,22 @@
     } // 图标不配套调整
     .iconfont:before {
       margin-top: 1px;
+      margin-top: 2px\0;
+
       display: inline-block;
       width: 30px;
       text-align: center;
-      font-size: 18px;
+      font-size: 20px;
 
 
+    }
+    a.icon-html:before{
+      margin-top: 2px;
+      margin-top: 3px\0;
+      font-size: 21px;
+    }
+    a.icon-daochu2:before{
+      font-size: 19px!important;
     }
   } // ————————————操作栏-结束—————————————
   //
@@ -239,7 +249,7 @@
     .option-list
       a.iconfont( @click="toggleFoldTextarea", :title="textareaShow? '收起编辑区': '展开编辑区'", :class="{ active: !textareaShow, 'icon-web_shouhui' :textareaShow, 'icon-web_xiangxiazhankai': !textareaShow }" )
       a.iconfont.icon-daoru-copy( @click="importFile", title="导入本地markdown文件" )
-      a.iconfont.icon-export( @click="exportFileSure('markdown')", title="导出markdown文件到本地" )
+      a.iconfont.icon-daochu2( @click="exportFileSure('markdown')", title="导出markdown文件到本地" )
       a.iconfont.icon-html( @click="exportFileSure('html')", title="导出html文件到本地" )
       a.iconfont.icon-baocun( @click="save", title="保存" )
       a.iconfont.icon-iconfontxinjian( @click="newMarkdown", title="新建",  :class="{active:!editingFile}" )

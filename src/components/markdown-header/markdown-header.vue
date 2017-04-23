@@ -87,7 +87,7 @@
   .document-info(v-if="editingFile===null || ( editingFile!==null && editingFile.info.length!=0 )")
     .info(v-for="v in fileInfo")
       span.info-key {{v.key+': '}}
-      span.info-value: a(:href="v.link?v.link.indexOf('http://')===-1? 'http://'+v.link:v.link: false", :target="v.link?'_blank':false") {{v.value}}
+      span.info-value: a(:href="v | addHttp", :title="v | addHttp", :target="v.link?'_blank':false") {{v.value}}
 
 </template>
 
@@ -100,6 +100,11 @@ export default {
   data() {
     return {
       msg: 'this is from markdown-header.vue',
+    }
+  },
+  filters:{
+    addHttp(v) {
+      return v.link?(v.link.indexOf('http://')===-1? 'http://'+v.link:v.link): false
     }
   },
   computed: {

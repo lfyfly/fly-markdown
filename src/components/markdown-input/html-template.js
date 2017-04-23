@@ -294,7 +294,7 @@ var htmlTemplate =`<!DOCTYPE html>
     }
 
     .markdown-html>* {
-      margin-bottom: .4em
+      margin-bottom: 1em
     }
 
     .markdown-html h1 a.title,

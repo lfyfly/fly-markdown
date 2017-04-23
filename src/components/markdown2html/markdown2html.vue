@@ -46,6 +46,10 @@
     border-top: $separation / 2 solid $main-color;
     border-bottom: $separation / 2 solid $main-color;
 
+    a.link:hover {
+      color:blue;
+    }
+
     &:after {
       visibility: hidden;
 
@@ -151,8 +155,11 @@ export default {
       var childrenEls = this.$refs.markdownHtml.children
       for (var i = 0; i < childrenEls.length; i++) {
         this.filterTitle(childrenEls[i], i, childrenEls)
-        this.setTableCaption(childrenEls[i], i, childrenEls)
+
+        // 如果有表格就要移除一位
+        if(this.setTableCaption(childrenEls[i], i, childrenEls)) i--
       }
+      this.addLinkBlank()
     },
     // 重新设置标题元素（增加id 和 href）
     filterTitle(el, i) {
@@ -175,6 +182,7 @@ export default {
         oCaption.innerHTML = captionStr
         el.insertBefore(oCaption, el.children[0])
         this.$refs.markdownHtml.removeChild(children[i - 1])
+        return true
       }
     },
     // 最多三级目录，最高级目录不一定是h1
@@ -222,6 +230,17 @@ export default {
 
 
     // —————————————————————————具象方法————————————————————————————
+    addLinkBlank() {
+      var links = this.$refs.markdownHtml.getElementsByTagName('a')
+      for (var i = 0; i < links.length; i++) {
+        if (!links[i].className) {
+          links[i].className = 'link'
+          links[i].target = '_blank'
+          links[i].title = links[i].href
+          links[i].style.textDecoration = 'underline'
+        }
+      }
+    },
     highLightCode() {
       if (!this.usehighLightCode) return
 
