@@ -1,5 +1,5 @@
 {
-  "name": "super-markdown",
+  "name": "fly-markdown",
   "author": "lfyfly <410793635@qq.com>",
   "version": "1.0.0",
   "description": "Non-traditional markdown, finally is to generate web pages, using vue2 custom components grammatical relation, customizable skin, automatically generated directory , supports syntax highlighting.Used to write static blog open source project documentation, code notes, personality an excellent choice.",
