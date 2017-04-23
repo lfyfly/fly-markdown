@@ -77,7 +77,7 @@
 <template lang="pug">
 .markdown-header
   a.catalog-btn(@click="toggleCatalog")
-  a(href="https://github.com/lfyfly/fly-markdown", target="_blank", title="制作软件地址").made-by made by flyMarkdown
+  a(href="https://lfyfly.github.io/fly-markdown/", target="_blank", title="制作软件地址").made-by made by flyMarkdown
 
   .document-header(:class="{noFileInfo: IsNoFileInfo }")
     h1.document-title {{editingFile? editingFile.fileName: 'fly-markdown'}}
